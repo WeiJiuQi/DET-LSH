@@ -1,0 +1,111 @@
+
+#ifndef al_parallel_inmemory_query_engine_h
+#define al_parallel_inmemory_query_engine_h
+#include "../../config.h"
+#include "../../globals.h"
+#include "utils/sax/ts.h"
+#include "utils/sax/sax.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#include "utils/isax/isax_index.h"
+#include "utils/isax/isax_node.h"
+#include "utils/isax/pqueue.h"
+#include "utils/isax/isax_first_buffer_layer.h"
+#include "utils/isax/isax_node_split.h"
+#include "indexing_support.h"
+
+typedef struct query_result {
+    float distance;
+	float upper_distance;
+	float lower_distance;
+    isax_node *node;
+    size_t pqueue_position;
+} query_result;
+
+typedef struct index_query_result {
+    int number_of_index;
+	query_result** result;
+} index_query_result;
+
+
+static int
+cmp_pri(double next, double curr)
+{
+	return (next > curr);
+}
+
+
+static double
+get_pri(void *a)
+{
+	return (double) ((query_result *) a)->lower_distance;
+}
+
+
+static void
+set_pri(void *a, double pri)
+{
+	((query_result *) a)->lower_distance = (float)pri;
+}
+
+
+static size_t
+get_pos(void *a)
+{
+	return ((query_result *) a)->pqueue_position;
+}
+
+
+static void
+set_pos(void *a, size_t pos)
+{
+	((query_result *) a)->pqueue_position = pos;
+}
+
+typedef struct localStack {
+    isax_node **val; 
+    int top;
+    int bottom;
+}localStack;
+
+typedef struct DETLSH_workerdata
+{
+	isax_node *current_root_node;
+	data_type *lsh,*lshU,*lshL,*data_point,*uo,*lo;
+	pqueue_t *pq;
+	isax_index *index;
+	float minimum_distance;
+	int limit;
+	pthread_mutex_t *lock_current_root_node;
+	pthread_mutex_t *lock_queue;
+	pthread_barrier_t *lock_barrier;
+	pthread_rwlock_t *lock_bsf;
+	query_result *bsf_result;
+	int *node_counter;
+	isax_node **nodelist;
+	int amountnode;
+	localStack *localstk; 
+	localStack *allstk;
+	pthread_mutex_t *locallock,*alllock;
+	int *queuelabel,*allqueuelabel;
+	pqueue_t **allpq;
+	int startqueuenumber;
+	int warpWind;
+	pqueue_bsf *pq_bsf;
+	data_type *lshv;
+	float search_radius;
+}DETLSH_workerdata;
+
+pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index *index,node_list *nodelist,
+                           float minimum_distance, int min_checked_leaves, float search_radius);						
+void* range_search_worker(void *rfdata);
+void traverse_subtree(float *lsh,isax_node *node,isax_index *index,float search_radius,pqueue_t **pq,pthread_mutex_t *lock_queue,int *tnumber);
+
+int N_PQUEUE;
+
+int maxquerythread;
+int maxreadthread;
+
+#endif

@@ -1,0 +1,5 @@
+** For next releases **
+-> Addition of an index loading module.
+-> Addition of a query front-end for interactive analysis - libreadline
+-> When it cannot split any more - it should not fail - but it should increase the max leaf size for this leaf
+-> Can we increment the index - what happens to already materialized leaves?
