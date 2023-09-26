@@ -1,0 +1,17 @@
+autom4te.cache/
+bin/
+lib/
+src/main/.deps/
+src/main/.dirstamp
+src/utils/.deps/
+src/utils/.dirstamp
+src/utils/isax/.deps/
+src/utils/isax/.dirstamp
+src/utils/sax/.deps/
+src/utils/sax/.dirstamp
+
+*.o
+src/main/*.o
+src/utils/*.o
+src/utils/isax/*.o
+src/utils/sax/*.o
