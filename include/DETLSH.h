@@ -29,7 +29,6 @@ extern "C" {
 #include "utils/sax/sax.h"
 #include "utils/sax/ts.h"
 #include "utils/isax/isax_index.h"
-#include "utils/isax/isax_file_loaders.h"
 #include "utils/isax/isax_first_buffer_layer.h"
 #include "utils/query_support.h"
 #include "utils/indexing_support.h"

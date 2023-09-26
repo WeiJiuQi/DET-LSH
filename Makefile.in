@@ -140,9 +140,7 @@ am__v_AR_1 =
 lib_libutils_a_AR = $(AR) $(ARFLAGS)
 lib_libutils_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_lib_libutils_a_OBJECTS =  \
-	src/utils/isax/lib_libutils_a-isax_file_loaders.$(OBJEXT) \
-	src/utils/isax/lib_libutils_a-isax_first_buffer_layer.$(OBJEXT) \
+am_lib_libutils_a_OBJECTS = src/utils/isax/lib_libutils_a-isax_first_buffer_layer.$(OBJEXT) \
 	src/utils/isax/lib_libutils_a-isax_index.$(OBJEXT) \
 	src/utils/isax/lib_libutils_a-isax_node.$(OBJEXT) \
 	src/utils/isax/lib_libutils_a-isax_node_buffer.$(OBJEXT) \
@@ -179,7 +177,6 @@ am__depfiles_remade = src/main/$(DEPDIR)/bin_DETLSH-DETLSH.Po \
 	src/utils/$(DEPDIR)/lib_libutils_a-encoding_support.Po \
 	src/utils/$(DEPDIR)/lib_libutils_a-indexing_support.Po \
 	src/utils/$(DEPDIR)/lib_libutils_a-query_support.Po \
-	src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po \
 	src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_first_buffer_layer.Po \
 	src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_index.Po \
 	src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_node.Po \
@@ -363,7 +360,7 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 lib_LIBRARIES = lib/libutils.a
-lib_libutils_a_SOURCES = src/utils/isax/isax_file_loaders.c src/utils/isax/isax_first_buffer_layer.c src/utils/isax/isax_index.c src/utils/isax/isax_node.c src/utils/isax/isax_node_buffer.c src/utils/isax/isax_node_record.c src/utils/isax/isax_node_split.c src/utils/isax/pqueue.c src/utils/sax/sax.c src/utils/sax/ts.c src/utils/query_support.c src/utils/indexing_support.c src/utils/encoding_support.c
+lib_libutils_a_SOURCES = src/utils/isax/isax_first_buffer_layer.c src/utils/isax/isax_index.c src/utils/isax/isax_node.c src/utils/isax/isax_node_buffer.c src/utils/isax/isax_node_record.c src/utils/isax/isax_node_split.c src/utils/isax/pqueue.c src/utils/sax/sax.c src/utils/sax/ts.c src/utils/query_support.c src/utils/indexing_support.c src/utils/encoding_support.c
 lib_libutils_a_CFLAGS = -I/opt/local/include -Iinclude/ -march=native -mavx -mavx2 -msse3 -fopenmp
 bin_DETLSH_SOURCES = src/main/DETLSH.cpp
 bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
@@ -501,9 +498,6 @@ src/utils/isax/$(am__dirstamp):
 src/utils/isax/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/utils/isax/$(DEPDIR)
 	@: > src/utils/isax/$(DEPDIR)/$(am__dirstamp)
-src/utils/isax/lib_libutils_a-isax_file_loaders.$(OBJEXT):  \
-	src/utils/isax/$(am__dirstamp) \
-	src/utils/isax/$(DEPDIR)/$(am__dirstamp)
 src/utils/isax/lib_libutils_a-isax_first_buffer_layer.$(OBJEXT):  \
 	src/utils/isax/$(am__dirstamp) \
 	src/utils/isax/$(DEPDIR)/$(am__dirstamp)
@@ -587,7 +581,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/$(DEPDIR)/lib_libutils_a-encoding_support.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/$(DEPDIR)/lib_libutils_a-indexing_support.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/$(DEPDIR)/lib_libutils_a-query_support.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_first_buffer_layer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_index.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_node.Po@am__quote@ # am--include-marker
@@ -619,20 +612,6 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-src/utils/isax/lib_libutils_a-isax_file_loaders.o: src/utils/isax/isax_file_loaders.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_libutils_a_CFLAGS) $(CFLAGS) -MT src/utils/isax/lib_libutils_a-isax_file_loaders.o -MD -MP -MF src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Tpo -c -o src/utils/isax/lib_libutils_a-isax_file_loaders.o `test -f 'src/utils/isax/isax_file_loaders.c' || echo '$(srcdir)/'`src/utils/isax/isax_file_loaders.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Tpo src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/utils/isax/isax_file_loaders.c' object='src/utils/isax/lib_libutils_a-isax_file_loaders.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_libutils_a_CFLAGS) $(CFLAGS) -c -o src/utils/isax/lib_libutils_a-isax_file_loaders.o `test -f 'src/utils/isax/isax_file_loaders.c' || echo '$(srcdir)/'`src/utils/isax/isax_file_loaders.c
-
-src/utils/isax/lib_libutils_a-isax_file_loaders.obj: src/utils/isax/isax_file_loaders.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_libutils_a_CFLAGS) $(CFLAGS) -MT src/utils/isax/lib_libutils_a-isax_file_loaders.obj -MD -MP -MF src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Tpo -c -o src/utils/isax/lib_libutils_a-isax_file_loaders.obj `if test -f 'src/utils/isax/isax_file_loaders.c'; then $(CYGPATH_W) 'src/utils/isax/isax_file_loaders.c'; else $(CYGPATH_W) '$(srcdir)/src/utils/isax/isax_file_loaders.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Tpo src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/utils/isax/isax_file_loaders.c' object='src/utils/isax/lib_libutils_a-isax_file_loaders.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_libutils_a_CFLAGS) $(CFLAGS) -c -o src/utils/isax/lib_libutils_a-isax_file_loaders.obj `if test -f 'src/utils/isax/isax_file_loaders.c'; then $(CYGPATH_W) 'src/utils/isax/isax_file_loaders.c'; else $(CYGPATH_W) '$(srcdir)/src/utils/isax/isax_file_loaders.c'; fi`
 
 src/utils/isax/lib_libutils_a-isax_first_buffer_layer.o: src/utils/isax/isax_first_buffer_layer.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_libutils_a_CFLAGS) $(CFLAGS) -MT src/utils/isax/lib_libutils_a-isax_first_buffer_layer.o -MD -MP -MF src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_first_buffer_layer.Tpo -c -o src/utils/isax/lib_libutils_a-isax_first_buffer_layer.o `test -f 'src/utils/isax/isax_first_buffer_layer.c' || echo '$(srcdir)/'`src/utils/isax/isax_first_buffer_layer.c
@@ -1120,7 +1099,6 @@ distclean: distclean-am
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-encoding_support.Po
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-indexing_support.Po
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-query_support.Po
-	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_first_buffer_layer.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_index.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_node.Po
@@ -1181,7 +1159,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-encoding_support.Po
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-indexing_support.Po
 	-rm -f src/utils/$(DEPDIR)/lib_libutils_a-query_support.Po
-	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_file_loaders.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_first_buffer_layer.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_index.Po
 	-rm -f src/utils/isax/$(DEPDIR)/lib_libutils_a-isax_node.Po

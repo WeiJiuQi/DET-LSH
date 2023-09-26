@@ -21,7 +21,6 @@
 #include "utils/isax/isax_node.h"
 #include "utils/isax/isax_index.h"
 #include "utils/isax/isax_node_record.h"
-#include "utils/isax/isax_file_loaders.h"
 
 void index_creation(const char *ifilename, long int data_point_num, isax_index *index)
 {
