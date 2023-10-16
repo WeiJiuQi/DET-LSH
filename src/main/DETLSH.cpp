@@ -23,14 +23,14 @@ int main (int argc, char **argv)
     strcpy(query_directory, getenv("HOME"));
     strcat(query_directory, "/data/query");
 
-    static char benchmark_directory[FILENAME_LENGTH];
-    strcpy(benchmark_directory, getenv("HOME"));
-    strcat(benchmark_directory, "/data/benchmark");
+    static char groundtruth_directory[FILENAME_LENGTH];
+    strcpy(groundtruth_directory, getenv("HOME"));
+    strcat(groundtruth_directory, "/data/groundtruth");
 
     static char * dataset = data_directory;
     static char * queries = query_directory;
     static char * index_path = index_directory;
-    static char * benchmark = benchmark_directory;
+    static char * groundtruth = groundtruth_directory;
     static long int dataset_size = 6000000;//testbench
     static int queries_size = 10;
     static int data_dimensionality = 256;
@@ -50,7 +50,7 @@ int main (int argc, char **argv)
     static int cpu_control_type = 1;
     static char SIMD_flag=0;
     static int sample_type=2;
-    static int generate_benchmark=0;
+    static int generate_groundtruth=0;
 
     int calculate_thread=8;
     l_size =4;
@@ -97,8 +97,8 @@ int main (int argc, char **argv)
             {"l-size", required_argument, 0, 'E'},
             {"search-radius", required_argument, 0, 'F'},
             {"max-candidate-size", required_argument, 0, 'G'},
-            {"benchmark", required_argument, 0, 'H'},
-            {"generate-benchmark", no_argument, 0, 'I'},
+            {"groundtruth", required_argument, 0, 'H'},
+            {"generate-groundtruth", no_argument, 0, 'I'},
             {NULL, 0, NULL, 0}
         };
 
@@ -211,7 +211,7 @@ int main (int argc, char **argv)
                 max_candidate_size = atoi(optarg);
                 break;
             case 'H':
-                benchmark = optarg;
+                groundtruth = optarg;
                 break;
 
                 printf("Usage:\n\
@@ -266,7 +266,7 @@ int main (int argc, char **argv)
                 SIMD_flag = 1;
                 break;
             case 'I':
-                generate_benchmark = 1;
+                generate_groundtruth = 1;
                 break;
             default:
                 exit(-1);
@@ -854,9 +854,9 @@ int main (int argc, char **argv)
     std::cout << "The total time of encoding and indexing phase is: " << index_all.count() * 1000.0f << "ms." << std::endl;
     std::cout << "The average query time is " << query_all.count() * 1000.0f / queries_size << "ms." << std::endl;
 
-    if (generate_benchmark)
+    if (generate_groundtruth)
     {
-        std::cout << "-----------------Generating benchmark-----------------" << std::endl;
+        std::cout << "-----------------Generating groundtruth-----------------" << std::endl;
 
         data_type ** result = (data_type **) malloc(sizeof(data_type*) * queries_size);
         for (int i = 0; i < queries_size; i++)
@@ -914,27 +914,27 @@ int main (int argc, char **argv)
         std::cout << "The average recall value is: " << recall_value << std::endl;
         std::cout << "The overall ratio is: " << overall_ratio << std::endl;
 
-        std::cout << "-----------------Saving benchmark-----------------" << std::endl;
-        FILE *ifile_benchmark;
-        ifile_benchmark = fopen (benchmark,"wb");
+        std::cout << "-----------------Saving groundtruth-----------------" << std::endl;
+        FILE *ifile_groundtruth;
+        ifile_groundtruth = fopen (groundtruth,"wb");
         for (int i = 0; i < queries_size; i++)
         {
-            fwrite(result[i], sizeof(float), k_size, ifile_benchmark);            
+            fwrite(result[i], sizeof(float), k_size, ifile_groundtruth);            
         }
-        fclose(ifile_benchmark);
+        fclose(ifile_groundtruth);
     } else {
-        std::cout << "-----------------Loading benchmark-----------------" << std::endl;
-        FILE *ifile_benchmark;
-        ifile_benchmark = fopen (benchmark,"rb");
-        if (ifile_benchmark == NULL) {
-            fprintf(stderr, "File %s not found!\n", benchmark);
+        std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
+        FILE *ifile_groundtruth;
+        ifile_groundtruth = fopen (groundtruth,"rb");
+        if (ifile_groundtruth == NULL) {
+            fprintf(stderr, "File %s not found!\n", groundtruth);
             exit(-1);
         }
         data_type ** result = (data_type **) malloc(sizeof(data_type *) * queries_size);
         for (int i = 0; i < queries_size; i++)
         {
             result[i] = (data_type *) malloc(sizeof(data_type) * k_size);
-            fread(result[i], sizeof(float), k_size, ifile_benchmark);                
+            fread(result[i], sizeof(float), k_size, ifile_groundtruth);                
         }
 
         int retrived_data_num = 0;
