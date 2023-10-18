@@ -19,7 +19,7 @@
 root_mask_type insert_to_index(isax_index *index, 
                                     sax_type * sax,
                                     file_position_type * pos,pthread_mutex_t *lock_firstnode,int workernumber,int total_workernumber);
-void index_creation(const char *ifilename, long int data_point_num, isax_index *index);
+void index_creation(long int data_point_num, isax_index *index);
 void* index_creation_worker(void *transferdata);
 enum response flush_subtree_leaf_buffers_inmemory (isax_index *index, isax_node *node);
 isax_index * isax_index_init_inmemory(isax_index_settings *settings);

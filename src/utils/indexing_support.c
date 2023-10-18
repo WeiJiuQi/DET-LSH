@@ -22,7 +22,7 @@
 #include "utils/isax/isax_index.h"
 #include "utils/isax/isax_node_record.h"
 
-void index_creation(const char *ifilename, long int data_point_num, isax_index *index)
+void index_creation(long int data_point_num, isax_index *index)
 {
 
     index->sax_file=NULL;

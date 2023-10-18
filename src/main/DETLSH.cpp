@@ -639,7 +639,7 @@ int main (int argc, char **argv)
        
         // Encoding and constructing indexes
         start = std::chrono::high_resolution_clock::now();
-        index_creation(dataset, dataset_size, idx_lsh[num_l]);
+        index_creation(dataset_size, idx_lsh[num_l]);
         end = std::chrono::high_resolution_clock::now();
         duration = end - start;
         index_all += duration;

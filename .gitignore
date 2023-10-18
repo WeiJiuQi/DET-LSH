@@ -15,3 +15,5 @@ src/main/*.o
 src/utils/*.o
 src/utils/isax/*.o
 src/utils/sax/*.o
+
+.vscode/
