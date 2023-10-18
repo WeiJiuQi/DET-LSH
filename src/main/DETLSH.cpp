@@ -802,7 +802,7 @@ int main (int argc, char **argv)
                     dist_euclidean = euclidean_distance(idx_lsh[mindist_index]->query_points[q_loaded], &(rawfile[*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i]]), 
                                         idx_lsh[0]->settings->data_dimensionality);
                     nodes[q_loaded][data_loaded].dist = dist_euclidean;
-                    nodes[q_loaded][data_loaded].currentposition = *index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i] / 128;                      
+                    nodes[q_loaded][data_loaded].currentposition = *index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i] / idx_lsh[0]->settings->data_dimensionality;                      
                     isCandidate[*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i]] = true;
                     data_loaded++;
 
