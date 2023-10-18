@@ -26,9 +26,8 @@
 
 #define NTHREutils 4
 
-void range_query(const char *ifilename, int q_num, isax_index *index,
-                            float minimum_distance, int min_checked_leaves,int k,data_type** lsh_hash_set, float search_radius,
-                            pqueue_t ** (*search_function)(data_type*, data_type*, isax_index*,node_list*, float, int, float)) 
+void range_query(const char *ifilename, int q_num, isax_index *index, int k,data_type** lsh_hash_set, float search_radius,
+                            pqueue_t ** (*search_function)(data_type*, data_type*, isax_index*,node_list*, float, float)) 
 {
     fprintf(stderr, ">>> Performing range queries in file: %s\n", ifilename);
 
@@ -54,7 +53,7 @@ void range_query(const char *ifilename, int q_num, isax_index *index,
     while (q_loaded < q_num)
     {
         index->range_queue_result[q_loaded].q_num = q_loaded;
-        index->range_queue_result[q_loaded].pq = search_function(index->query_points[q_loaded], index->lsh_mem_array_for_query[q_loaded], index,&nodelist, minimum_distance, min_checked_leaves, search_radius);
+        index->range_queue_result[q_loaded].pq = search_function(index->query_points[q_loaded], index->lsh_mem_array_for_query[q_loaded], index,&nodelist, search_radius);
 
         fflush(stdout);
 
@@ -64,8 +63,7 @@ void range_query(const char *ifilename, int q_num, isax_index *index,
     fprintf(stderr, ">>> Finished range queries.\n");
 }
 
-pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index *index,node_list *nodelist,
-                           float minimum_distance, int min_checked_leaves, float search_radius) 
+pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index *index,node_list *nodelist, float search_radius) 
 {
     int node_counter=0;
 
@@ -101,7 +99,6 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         workerdata[i].nodelist=nodelist->nlist;
         workerdata[i].amountnode=nodelist->node_amount;
         workerdata[i].index=index;
-        workerdata[i].minimum_distance=minimum_distance;
         workerdata[i].node_counter=&node_counter;
         workerdata[i].pq=allpq[i];
         workerdata[i].lock_barrier=&lock_barrier;
@@ -136,7 +133,6 @@ void* range_search_worker(void *rfdata)
     data_type *data_point=((DETLSH_workerdata*)rfdata)->data_point;
     pqueue_t *pq=((DETLSH_workerdata*)rfdata)->pq;
     query_result *do_not_remove = ((DETLSH_workerdata*)rfdata)->bsf_result;
-    float minimum_distance=((DETLSH_workerdata*)rfdata)->minimum_distance;
     int limit=((DETLSH_workerdata*)rfdata)->limit;
     int checks = 0;
     bool finished=true;

@@ -45,8 +45,6 @@ int main (int argc, char **argv)
     static int total_loaded_leaves = 1;
     static int tight_bound = 0;
     static int aggressive_check = 0;
-    static float minimum_distance = FLT_MAX;
-    static int min_checked_leaves = -1;
     static int cpu_control_type = 1;
     static char SIMD_flag=0;
     static int sample_type=2;
@@ -82,9 +80,7 @@ int main (int argc, char **argv)
             {"index-path", required_argument, 0, 'p'},
             {"queries", required_argument, 0, 'q'},
             {"read-block", required_argument, 0, 'r'},
-            {"minimum-distance", required_argument, 0, 's'},
             {"data-dimensionality", required_argument, 0, 't'},
-            {"min-checked-leaves", required_argument, 0, 'u'},
             {"cpu-type", required_argument, 0, 'w'},
             {"sax-cardinality", required_argument, 0, 'x'},
             {"LSH-dimensionality", required_argument, 0, 'B'},
@@ -113,11 +109,6 @@ int main (int argc, char **argv)
             case 'g':
                 aggressive_check = 1;
                 break;
-
-            case 's':
-                minimum_distance = atof(optarg);
-                break;
-
             case 'n':
                 tight_bound = 1;
                 break;
@@ -177,9 +168,6 @@ int main (int argc, char **argv)
                 flush_limit = atoi(optarg);
                 break;
 
-            case 'u':
-            	min_checked_leaves = atoi(optarg);
-            	break;
             case 'w':
                 cpu_control_type = atoi(optarg);
                 break;
@@ -715,9 +703,7 @@ int main (int argc, char **argv)
     start = std::chrono::high_resolution_clock::now();
     for (int num_l = 0; num_l < l_size; num_l++)
     {     
-        minimum_distance = FLT_MAX;
-        min_checked_leaves = -1;
-        range_query(queries, queries_size, idx_lsh[num_l], minimum_distance, min_checked_leaves,k_size, idx_lsh[num_l]->lsh_hash_set, search_radius, &range_search_lsh);
+        range_query(queries, queries_size, idx_lsh[num_l], k_size, idx_lsh[num_l]->lsh_hash_set, search_radius, &range_search_lsh);
     }
     end = std::chrono::high_resolution_clock::now();
     duration = end - start;
