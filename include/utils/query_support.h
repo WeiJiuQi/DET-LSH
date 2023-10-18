@@ -97,7 +97,7 @@ typedef struct DETLSH_workerdata
 	float search_radius;
 }DETLSH_workerdata;
 
-void range_query(const char *ifilename, int q_num, isax_index *index,int k, data_type** lsh_hash_set, float search_radius,
+void range_query(const char *ifilename, int q_num, isax_index *index,int k, float search_radius,
                             pqueue_t ** (*search_function)(data_type*, data_type*, isax_index*,node_list*, float));
 							
 pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index *index,node_list *nodelist,float search_radius);						

@@ -26,7 +26,7 @@
 
 #define NTHREutils 4
 
-void range_query(const char *ifilename, int q_num, isax_index *index, int k,data_type** lsh_hash_set, float search_radius,
+void range_query(const char *ifilename, int q_num, isax_index *index, int k, float search_radius,
                             pqueue_t ** (*search_function)(data_type*, data_type*, isax_index*,node_list*, float)) 
 {
     fprintf(stderr, ">>> Performing range queries in file: %s\n", ifilename);
