@@ -1,6 +1,6 @@
+#ifndef query_support_h
+#define query_support_h
 
-#ifndef al_parallel_inmemory_query_engine_h
-#define al_parallel_inmemory_query_engine_h
 #include "../../config.h"
 #include "../../globals.h"
 #include "utils/sax/ts.h"

@@ -1,5 +1,5 @@
-#ifndef sfalib_h
-#define sfalib_h
+#ifndef encoding_support_h
+#define encoding_support_h
 
 #include "../../config.h"
 #include "../../globals.h"

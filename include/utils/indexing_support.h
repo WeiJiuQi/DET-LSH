@@ -1,5 +1,6 @@
-#ifndef al_inmemory_index_engine_h
-#define al_inmemory_index_engine_h
+#ifndef index_support_h
+#define index_support_h
+
 #include "../../config.h"
 #include "../../globals.h"
 #include "utils/sax/ts.h"
