@@ -973,7 +973,7 @@ void INThandler(int sig)
     }  
 }
 
-void breakpoints_selection(isax_index *index, const char *ifilename, long int ts_num, int maxquerythread, data_type * rawfile)
+void breakpoints_selection(isax_index *index, const char *ifilename, long int data_point_num, int maxquerythread, data_type * rawfile)
 {
     int LSH_dimensionality = index->settings->LSH_dimensionality;
     unsigned int sample_size = index->settings->sample_size;
@@ -1008,14 +1008,14 @@ void breakpoints_selection(isax_index *index, const char *ifilename, long int ts
         //uniform sampling
         else if(index->settings->sample_type == 2)
         {
-            input_data[i].start_number=i*(ts_num/maxquerythread);
-            input_data[i].stop_number=(i+1)*(ts_num/maxquerythread);
+            input_data[i].start_number=i*(data_point_num/maxquerythread);
+            input_data[i].stop_number=(i+1)*(data_point_num/maxquerythread);
         }
         //random sampling
         else if(index->settings->sample_type == 3)
         {
             input_data[i].start_number=0;
-            input_data[i].stop_number=ts_num;
+            input_data[i].stop_number=data_point_num;
         }
  
         input_data[i].raw_file = rawfile;
@@ -1029,7 +1029,7 @@ void breakpoints_selection(isax_index *index, const char *ifilename, long int ts
         input_data[maxquerythread-1].stop_number=sample_size;
     } else if(index->settings->sample_type == 2)
     {
-        input_data[maxquerythread-1].stop_number=ts_num;
+        input_data[maxquerythread-1].stop_number=data_point_num;
     }
 
     for (int i = 0; i < maxquerythread; i++)
