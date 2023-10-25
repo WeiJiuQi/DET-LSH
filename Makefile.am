@@ -10,6 +10,6 @@ bin_PROGRAMS = bin/DETLSH
 
 bin_DETLSH_SOURCES = src/main/DETLSH.cpp
 bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
-bin_DETLSH_LDADD = -lm -lreadline -lutils -lm -lpthread
+bin_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
 bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -mavx -mavx2 -msse3
 
