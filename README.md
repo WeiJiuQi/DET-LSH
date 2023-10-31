@@ -15,8 +15,8 @@ make
 
 ```
 cd ./bin
-./DETLSH --dataset $PATH_TO_DATASET$ --leaf-size $MAX_SIZE$ --dataset-size $n$  --queries $PATH_TO_QUERY$ --queries-size $QUERY_SIZE$ --sample-size $SAMPLE_SIZE$ --sample-type $SAMPLE_TYPE$ --k-size $k$ --data-dimensionality $DIMENSIONALITY$ --l-size $L$ --search-radius $r$ --max-candidate-size $beta*n$ --groundtruth $PATH_TO_groundtruth$
-```radius
+./DETLSH --dataset $PATH_TO_DATASET$ --leaf-size $MAX_SIZE$ --dataset-size $n$  --queries $PATH_TO_QUERY$ --queries-size $QUERY_SIZE$ --sample-size $SAMPLE_SIZE$ --sample-type $SAMPLE_TYPE$ --k-size $k$ --data-dimensionality $DIMENSIONALITY$ --l-size $L$ --search-radius $r$ --max-candidate-size $beta*n$ --benchmark $PATH_TO_BENCHMARK$
+```
 
 + --dataset: the path to dataset file
 + --leaf-size: a positive integer, the max size of a leaf node in DE-Tree
@@ -30,11 +30,11 @@ cd ./bin
 + --l-size: L, a positive integer, the number of indexes
 + --search-radius: r, a float number, the initial search radius
 + --max-candidate-size: a positive integer, the maximum number of returned points, i.e., beta*n
-+ --groundtruth: the path to groundtruth file
++ --benchmark: the path to benchmark file
 
-If want to generate groundtruth before query, you can add the `--generate-groundtruth` parameter.
+The specific commands and parameters for each dataset of DET-LSH are written in file `run_DETLSH.sh`.
 
-## Dataset, Query, and Groundtruth
+## Dataset, Query, and Benchmark
 
 #### Dataset
 
@@ -64,9 +64,9 @@ Our input dataset file and query file is in binary format without any indice, i.
 {The binary vectors of query points, arranged in turn}
 ```
 
-#### groundtruth
+#### Benchmark
 
-The format of groundtruth file is:
+The format of benchmark file is:
 
 ```
 {The Euclidean distances of exact k-NN points to each query point, arranged in turn}
