@@ -152,17 +152,17 @@ enum response encoding(isax_index *index, sax_type *sax_out, data_type *lsh)
     // binarysearch
     for (int k = 0; k < LSH_dimensionality; ++k)
     {
-        unsigned int left = 0, right = index->settings->sax_alphabet_cardinality-2, res = index->settings->sax_alphabet_cardinality-2;
-        while (left < right) {
-            unsigned int middle = left + ((right - left) >> 1);
-            if (index->bins[k][middle] > lsh[k]) {
-                right = middle - 1;
-                res = middle;
-            } else {
+        int left = 0, right = index->settings->sax_alphabet_cardinality - 2;
+        int middle;
+        while (left <= right) {
+            middle = (left + right) / 2;
+            if (lsh[k] >= index->bins[k][middle]) {
                 left = middle + 1;
+            } else {
+                right = middle - 1;
             }
         }
-        sax_out[k] = (unsigned char) (res);
+        sax_out[k] = (unsigned char) (left);
     }
 
     if(sax_out != NULL) return SUCCESS;

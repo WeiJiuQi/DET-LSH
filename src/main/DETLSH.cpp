@@ -560,6 +560,7 @@ int main (int argc, char **argv)
     }
 
     std::mt19937 rng(unsigned(0));
+    // std::mt19937 rng(std::random_device{}());
     std::normal_distribution<float> nd;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
