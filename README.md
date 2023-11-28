@@ -38,7 +38,7 @@ The specific commands and parameters for each dataset of DET-LSH are written in 
 
 #### Dataset
 
-We use eight real-world datasets for ANN search: Msong, Deep1M, Sift10M, TinyImages80M, Sift100M, Yandex Deep500M, Microsoft SPACEV500M, and Microsoft Turing-ANNS500M. The key statistics of the datasets are summarized as follows.
+We use eight real-world datasets for ANN search: [Msong](https://www.cse.cuhk.edu.hk/systems/hash/gqr/datasets.html), [Deep1M](https://www.cse.cuhk.edu.hk/systems/hash/gqr/datasets.html), [Sift10M](http://corpus-texmex.irisa.fr/), TinyImages80M, [Sift100M](http://corpus-texmex.irisa.fr/), [Yandex Deep500M](https://big-ann-benchmarks.com/neurips21.html), [Microsoft SPACEV500M](https://big-ann-benchmarks.com/neurips21.html), and [Microsoft Turing-ANNS500M](https://big-ann-benchmarks.com/neurips21.html). The key statistics of the datasets are summarized as follows.
 
 |          Dataset          | Cardinality | Dimensions | Type  |
 | :-----------------------: | :---------: | :--------: | :---: |
