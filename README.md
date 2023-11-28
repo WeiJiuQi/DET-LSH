@@ -72,3 +72,26 @@ The format of benchmark file is:
 {The Euclidean distances of exact k-NN points to each query point, arranged in turn}
 ```
 
+## Parameters used in Our Paper
+
+### Parameters shared by different datasets
+
+|  Parameter  | Value |
+| :---------: | :---: |
+|   k-size    |  16   |
+|   l-size    |   4   |
+| sample-type |   2   |
+
+### Unique parameters for different datasets
+
+|          Dataset          | search-radius | leaf-size | sample-size | max-candidate-size |
+| :-----------------------: | :-----------: | :-------: | :---------: | :----------------: |
+|           Msong           |     2000      |   1000    |   100,000   |      100,000       |
+|          Deep1M           |       2       |    100    |   100,000   |      100,000       |
+|          Sift10M          |      200      |    100    |  1,000,000  |     1,000,000      |
+|       TinyImages80M       |       2       |  100000   |  8,000,000  |     8,000,000      |
+|         Sift100M          |      180      |   1000    | 10,000,000  |     10,000,000     |
+|      Yandex Deep500M      |       1       |   50000   | 50,000,000  |     50,000,000     |
+|   Microsoft SPACEV500M    |     18000     |  100000   | 50,000,000  |     50,000,000     |
+| Microsoft Turing-ANNS500M |       2       |   10000   | 50,000,000  |     50,000,000     |
+
