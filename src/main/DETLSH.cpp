@@ -193,7 +193,7 @@ int main (int argc, char **argv)
                 l_size = atoi(optarg);
                 break;
             case 'F':
-                search_radius = atoi(optarg);
+                search_radius = atof(optarg);
                 break;
             case 'G':
                 max_candidate_size = atoi(optarg);
