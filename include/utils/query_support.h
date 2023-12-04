@@ -73,10 +73,8 @@ typedef struct localStack {
 typedef struct DETLSH_workerdata
 {
 	isax_node *current_root_node;
-	data_type *lsh,*lshU,*lshL,*data_point,*uo,*lo;
-	pqueue_t *pq;
+	data_type *lsh, *data_point;
 	isax_index *index;
-	int limit;
 	pthread_mutex_t *lock_current_root_node;
 	pthread_mutex_t *lock_queue;
 	pthread_barrier_t *lock_barrier;

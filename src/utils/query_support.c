@@ -98,7 +98,6 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         workerdata[i].amountnode=nodelist->node_amount;
         workerdata[i].index=index;
         workerdata[i].node_counter=&node_counter;
-        workerdata[i].pq=allpq[i];
         workerdata[i].lock_barrier=&lock_barrier;
         workerdata[i].alllock=ququelock;
         workerdata[i].allpq=allpq;
@@ -127,9 +126,7 @@ void* range_search_worker(void *rfdata)
     isax_index *index=((DETLSH_workerdata*)rfdata)->index;
     data_type *lsh=((DETLSH_workerdata*)rfdata)->lsh;
     data_type *data_point=((DETLSH_workerdata*)rfdata)->data_point;
-    pqueue_t *pq=((DETLSH_workerdata*)rfdata)->pq;
     query_result *do_not_remove = ((DETLSH_workerdata*)rfdata)->bsf_result;
-    int limit=((DETLSH_workerdata*)rfdata)->limit;
     int checks = 0;
     bool finished=true;
     int current_root_node_number;
