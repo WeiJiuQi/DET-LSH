@@ -85,15 +85,8 @@ typedef struct DETLSH_workerdata
 	int *node_counter;
 	isax_node **nodelist;
 	int amountnode;
-	localStack *localstk; 
-	localStack *allstk;
-	pthread_mutex_t *locallock,*alllock;
-	int *queuelabel,*allqueuelabel;
+	pthread_mutex_t *alllock;
 	pqueue_t **allpq;
-	int startqueuenumber;
-	int warpWind;
-	pqueue_bsf *pq_bsf;
-	data_type *lshv;
 	float search_radius;
 }DETLSH_workerdata;
 

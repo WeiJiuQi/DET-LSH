@@ -37,8 +37,7 @@ void index_creation(long int data_point_num, isax_index *index)
     pthread_barrier_t lock_barrier1;
     pthread_barrier_init(&lock_barrier1, NULL, maxquerythread);
 
-    pthread_mutex_t lock_record=PTHREAD_MUTEX_INITIALIZER,lockfbl=PTHREAD_MUTEX_INITIALIZER,lock_index=PTHREAD_MUTEX_INITIALIZER,
-                    lock_firstnode=PTHREAD_MUTEX_INITIALIZER,lock_disk=PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t lock_firstnode=PTHREAD_MUTEX_INITIALIZER;
     
     destroy_fbl(index->fbl);
         index->fbl = (first_buffer_layer*)initialize_pRecBuf(index->settings->initial_fbl_buffer_size,
@@ -48,12 +47,8 @@ void index_creation(long int data_point_num, isax_index *index)
     for ( i = 0; i < maxquerythread; i++)
     {   
         input_data[i].index=index;
-        input_data[i].lock_fbl=&lockfbl;
-        input_data[i].lock_record=&lock_record;
         input_data[i].lock_firstnode =&lock_firstnode;
-        input_data[i].lock_index=&lock_index;
         input_data[i].data_point=rawfile;
-        input_data[i].lock_disk=&lock_disk;
         input_data[i].workernumber=i;
         input_data[i].total_workernumber=maxquerythread;
         input_data[i].start_number=i*(data_point_num/maxquerythread);

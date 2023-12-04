@@ -30,16 +30,11 @@ typedef struct buffer_data_inmemory
 	isax_index *index;
 	int start_number,stop_number;	
 	data_type * data_point;
-	pthread_mutex_t *lock_record;
-	pthread_mutex_t *lock_fbl;
 	pthread_mutex_t *lock_index;
-	pthread_mutex_t *lock_cbl;
 	pthread_mutex_t *lock_firstnode;
-	pthread_mutex_t *lock_nodeconter;
-	pthread_mutex_t *lock_disk;
 	int workernumber;
 	int total_workernumber;
-	pthread_barrier_t *lock_barrier1, *lock_barrier2;
+	pthread_barrier_t *lock_barrier1;
 	int *node_counter;
 	bool finished;
 	int *nodeid;

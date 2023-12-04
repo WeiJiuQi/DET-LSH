@@ -70,7 +70,6 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
     pqueue_t **allpq=malloc(sizeof(pqueue_t*)*N_PQUEUE);
 
     pthread_mutex_t ququelock[N_PQUEUE];
-    int queuelabel[N_PQUEUE];
 
     isax_node *current_root_node = index->first_node;
 
@@ -86,7 +85,6 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         allpq[i]=pqueue_init(index->settings->root_nodes_size/N_PQUEUE,
                         cmp_pri, get_pri, set_pri, get_pos, set_pos);
         pthread_mutex_init(&ququelock[i], NULL);
-        queuelabel[i]=1;
     }
 
     for (int i = 0; i < maxquerythread; i++)
@@ -103,9 +101,7 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         workerdata[i].pq=allpq[i];
         workerdata[i].lock_barrier=&lock_barrier;
         workerdata[i].alllock=ququelock;
-        workerdata[i].allqueuelabel=queuelabel;
         workerdata[i].allpq=allpq;
-        workerdata[i].startqueuenumber=i%N_PQUEUE;
         workerdata[i].search_radius=search_radius;
     }  
     
@@ -143,7 +139,6 @@ void* range_search_worker(void *rfdata)
     float bsfdisntance=bsf_result->distance;
     int calculate_node=0,calculate_node_quque=0;
     int tnumber=rand()% N_PQUEUE;
-    int startqueuenumber=((DETLSH_workerdata*)rfdata)->startqueuenumber;
     float search_radius=((DETLSH_workerdata*)rfdata)->search_radius;
 
     while (1) 
