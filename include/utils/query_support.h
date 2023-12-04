@@ -92,7 +92,7 @@ void range_query(const char *ifilename, int q_num, isax_index *index, float sear
                             pqueue_t ** (*search_function)(data_type*, data_type*, isax_index*,node_list*, float));
 							
 pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index *index,node_list *nodelist,float search_radius);						
-void* range_search_worker(void *rfdata);
+void* range_search_worker(void *workerdata);
 void traverse_subtree(float *lsh,isax_node *node,isax_index *index,float search_radius,pqueue_t **pq,pthread_mutex_t *lock_queue,int *tnumber);
 
 int N_PQUEUE;

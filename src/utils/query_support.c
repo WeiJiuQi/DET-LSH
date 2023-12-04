@@ -119,27 +119,27 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
 
 }
 
-void* range_search_worker(void *rfdata)
+void* range_search_worker(void *workerdata)
 {
     isax_node *current_root_node;
-    isax_index *index=((DETLSH_workerdata*)rfdata)->index;
-    data_type *lsh=((DETLSH_workerdata*)rfdata)->lsh;
-    data_type *data_point=((DETLSH_workerdata*)rfdata)->data_point;
+    isax_index *index=((DETLSH_workerdata*)workerdata)->index;
+    data_type *lsh=((DETLSH_workerdata*)workerdata)->lsh;
+    data_type *data_point=((DETLSH_workerdata*)workerdata)->data_point;
     int current_root_node_number;
     int tnumber=rand()% N_PQUEUE;
-    float search_radius=((DETLSH_workerdata*)rfdata)->search_radius;
+    float search_radius=((DETLSH_workerdata*)workerdata)->search_radius;
 
     while (1) 
     {
-        current_root_node_number=__sync_fetch_and_add(((DETLSH_workerdata*)rfdata)->node_counter,1);
-        if(current_root_node_number>= ((DETLSH_workerdata*)rfdata)->amountnode)
+        current_root_node_number=__sync_fetch_and_add(((DETLSH_workerdata*)workerdata)->node_counter,1);
+        if(current_root_node_number>= ((DETLSH_workerdata*)workerdata)->amountnode)
         break;
-        current_root_node=((DETLSH_workerdata*)rfdata)->nodelist[current_root_node_number];
+        current_root_node=((DETLSH_workerdata*)workerdata)->nodelist[current_root_node_number];
 
-        traverse_subtree(lsh,current_root_node,index,search_radius,((DETLSH_workerdata*)rfdata)->allpq,((DETLSH_workerdata*)rfdata)->alllock,&tnumber);
+        traverse_subtree(lsh,current_root_node,index,search_radius,((DETLSH_workerdata*)workerdata)->allpq,((DETLSH_workerdata*)workerdata)->alllock,&tnumber);
     }
 
-    pthread_barrier_wait(((DETLSH_workerdata*)rfdata)->lock_barrier);
+    pthread_barrier_wait(((DETLSH_workerdata*)workerdata)->lock_barrier);
 }
 
 void traverse_subtree(float *lsh,isax_node *node,isax_index *index,float search_radius,pqueue_t **pq,pthread_mutex_t *lock_queue,int *tnumber)
