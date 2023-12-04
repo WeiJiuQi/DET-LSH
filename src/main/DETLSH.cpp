@@ -704,7 +704,7 @@ int main (int argc, char **argv)
     start = std::chrono::high_resolution_clock::now();
     for (int num_l = 0; num_l < l_size; num_l++)
     {     
-        range_query(queries, queries_size, idx_lsh[num_l], k_size, search_radius, &range_search_lsh);
+        range_query(queries, queries_size, idx_lsh[num_l], search_radius, &range_search_lsh);
     }
     end = std::chrono::high_resolution_clock::now();
     duration = end - start;
