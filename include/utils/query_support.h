@@ -64,12 +64,6 @@ set_pos(void *a, size_t pos)
 	((query_result *) a)->pqueue_position = pos;
 }
 
-typedef struct localStack {
-    isax_node **val; 
-    int top;
-    int bottom;
-}localStack;
-
 typedef struct DETLSH_workerdata
 {
 	isax_node *current_root_node;

@@ -159,7 +159,6 @@ void traverse_subtree(float *lsh,isax_node *node,isax_index *index,float search_
             pqueue_insert(pq[*tnumber], dist_result);
             pthread_mutex_unlock(&lock_queue[*tnumber]);
             *tnumber=(*tnumber+1)%N_PQUEUE;
-            added_tree_node++;
         }
         else
         {   
