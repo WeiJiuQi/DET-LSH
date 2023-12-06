@@ -29,10 +29,8 @@ cd ./bin
 + --data-dimensionality: a positive integer, the dimensionality of dataset
 + --l-size: L, a positive integer, the number of indexes
 + --search-radius: r, a float number, the initial search radius
-+ --max-candidate-size: a positive integer, the maximum number of returned points, i.e., beta*n
++ --max-candidate-size: a positive integer, the maximum number of returned points, i.e., beta*n+k
 + --benchmark: the path to benchmark file
-
-The specific commands and parameters for each dataset of DET-LSH are written in file `run_DETLSH.sh`.
 
 ## Dataset, Query, and Benchmark
 
@@ -86,12 +84,12 @@ The format of benchmark file is:
 
 |          Dataset          | search-radius | leaf-size | sample-size | max-candidate-size |
 | :-----------------------: | :-----------: | :-------: | :---------: | :----------------: |
-|           Msong           |     2000      |   1000    |   100,000   |      100,000       |
-|          Deep1M           |       2       |    100    |   100,000   |      100,000       |
-|          Sift10M          |      200      |    100    |  1,000,000  |     1,000,000      |
-|       TinyImages80M       |       2       |  100000   |  8,000,000  |     8,000,000      |
-|         Sift100M          |      180      |   1000    | 10,000,000  |     10,000,000     |
-|      Yandex Deep500M      |       1       |   50000   | 50,000,000  |     50,000,000     |
-|   Microsoft SPACEV500M    |     18000     |  100000   | 50,000,000  |     50,000,000     |
-| Microsoft Turing-ANNS500M |       2       |   10000   | 50,000,000  |     50,000,000     |
+|           Msong           |     2000      |   1000    |   100,000   |    100,000 + k     |
+|          Deep1M           |       2       |    100    |   100,000   |    100,000 + k     |
+|          Sift10M          |      200      |    100    |  1,000,000  |   1,000,000 + k    |
+|       TinyImages80M       |       2       |  100000   |  8,000,000  |   8,000,000 + k    |
+|         Sift100M          |      180      |   1000    | 10,000,000  |   10,000,000 + k   |
+|      Yandex Deep500M      |       1       |   50000   | 50,000,000  |   50,000,000 + k   |
+|   Microsoft SPACEV500M    |     18000     |  100000   | 50,000,000  |   50,000,000 + k   |
+| Microsoft Turing-ANNS500M |       2       |   10000   | 50,000,000  |   50,000,000 + k   |
 
