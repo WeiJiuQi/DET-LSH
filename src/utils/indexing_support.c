@@ -32,17 +32,17 @@ void index_creation(long int data_point_num, isax_index *index)
     int node_counter=0;
     pthread_t threadid[maxquerythread];
     buffer_data_inmemory *input_data=malloc(sizeof(buffer_data_inmemory)*(maxquerythread));
-    index->sax_cache= malloc(sizeof(sax_type) * index->settings->LSH_dimensionality*data_point_num);
-    index->lsh_cache= malloc(sizeof(data_type) * index->settings->LSH_dimensionality*data_point_num);
+    // index->sax_cache= malloc(sizeof(sax_type) * index->settings->LSH_dimensionality*data_point_num);
+    // index->lsh_cache= malloc(sizeof(data_type) * index->settings->LSH_dimensionality*data_point_num);
     pthread_barrier_t lock_barrier1;
     pthread_barrier_init(&lock_barrier1, NULL, maxquerythread);
 
     pthread_mutex_t lock_firstnode=PTHREAD_MUTEX_INITIALIZER;
     
     destroy_fbl(index->fbl);
-        index->fbl = (first_buffer_layer*)initialize_pRecBuf(index->settings->initial_fbl_buffer_size,
-                                pow(2, index->settings->LSH_dimensionality), 
-                                index->settings->max_total_buffer_size+DISK_BUFFER_SIZE*(PROGRESS_CALCULATE_THREAD_NUMBER-1), index);
+    index->fbl = (first_buffer_layer*)initialize_pRecBuf(index->settings->initial_fbl_buffer_size,
+                            pow(2, index->settings->LSH_dimensionality), 
+                            index->settings->max_total_buffer_size+DISK_BUFFER_SIZE*(PROGRESS_CALCULATE_THREAD_NUMBER-1), index);
     
     for ( i = 0; i < maxquerythread; i++)
     {   
@@ -72,6 +72,7 @@ void index_creation(long int data_point_num, isax_index *index)
     index->sax_cache_size=index->total_records;
     free(input_data);
 
+    // destroy_fbl(index->fbl);
     fprintf(stderr, ">>> Finished encoding and indexing.\n");
 }
 
@@ -92,18 +93,18 @@ void* index_creation_worker(void *transferdata)
     file_position_type *pos = malloc(sizeof(file_position_type));
     isax_index *index= ((buffer_data_inmemory*)transferdata)->index;
     int LSH_dimensionality=((buffer_data_inmemory*)transferdata)->index->settings->LSH_dimensionality;
-    data_type * lsh = malloc(sizeof(data_type) * LSH_dimensionality);
+    // data_type * lsh = malloc(sizeof(data_type) * LSH_dimensionality);
 
     unsigned long i=0;
 
     for (i=start_number;i<stop_number;i++)
     {
 
-        lsh = index->lsh_mem_array[i];
+        // lsh = index->lsh_mem_array[i];
 
         gettimeofday(&transformation_time_start, NULL);
 
-        if(encoding(index, sax, lsh) == SUCCESS) 
+        if(encoding(index, sax, index->lsh_mem_array[i]) == SUCCESS) 
         {
             gettimeofday(&current_time, NULL);
             transformation_time += ((current_time.tv_sec*1000000 + (current_time.tv_usec)) - (transformation_time_start.tv_sec*1000000 + (transformation_time_start.tv_usec)));
@@ -111,7 +112,7 @@ void* index_creation_worker(void *transferdata)
 
             *pos = (file_position_type)(i*index->settings->data_dimensionality);
 
-            memcpy(&(index->lsh_cache[i*index->settings->LSH_dimensionality]),lsh, sizeof(data_type)* index->settings->LSH_dimensionality);
+            // memcpy(&(index->lsh_cache[i*index->settings->LSH_dimensionality]),lsh, sizeof(data_type)* index->settings->LSH_dimensionality);
 
             insert_to_index(index, sax, pos, ((buffer_data_inmemory*)transferdata)->lock_firstnode,((buffer_data_inmemory*)transferdata)->workernumber,((buffer_data_inmemory*)transferdata)->total_workernumber);
             

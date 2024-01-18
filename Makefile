@@ -273,13 +273,13 @@ AUTOMAKE = ${SHELL} '/home/jiuqi/DET-LSH/missing' automake-1.16
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -Ofast
+CFLAGS = -g -O3
 CPPFLAGS = 
 CSCOPE = cscope
 CTAGS = ctags
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -Ofast
+CXXFLAGS = -g -O3
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps

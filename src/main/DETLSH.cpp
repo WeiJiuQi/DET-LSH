@@ -569,6 +569,8 @@ int main (int argc, char **argv)
     // Load data
     load_data(dataset, dataset_size);
 
+    std::cout << "Actual memory usage before indexing: " << getCurrentRSS() / 1000000 << " MB" << std::endl;
+
     // Encoding and indexing
     for (int num_l = 0; num_l < l_size; num_l++)
     {
@@ -611,6 +613,8 @@ int main (int argc, char **argv)
             }
         }
 
+        free(data_point);
+
         // Breakpoints selection
         start = std::chrono::high_resolution_clock::now();
         breakpoints_init(idx_lsh[num_l]);
@@ -638,8 +642,10 @@ int main (int argc, char **argv)
         {
             free(idx_lsh[num_l]->lsh_mem_array[i]);
         }
-        free(idx_lsh[num_l]->lsh_mem_array);  
+        free(idx_lsh[num_l]->lsh_mem_array); 
     }
+
+    std::cout << "Actual memory usage after indexing: " << getCurrentRSS() / 1000000 << " MB" << std::endl;
 
     // Load and generate LSH representations for queries
     std::cout << "Load and generate LSH representations for queries." << std::endl;

@@ -71,7 +71,7 @@ typedef struct {
 
     FILE *sax_file;
     sax_type *sax_cache;
-    data_type *lsh_cache;
+    // data_type *lsh_cache;
     unsigned long sax_cache_size;
 
     unsigned long long allocated_memory;
