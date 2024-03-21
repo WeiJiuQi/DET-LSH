@@ -48,7 +48,6 @@ int main (int argc, char **argv)
     static int cpu_control_type = 1;
     static char SIMD_flag=0;
     static int sample_type=2;
-    static int generate_groundtruth=0;
 
     int calculate_thread=8;
     l_size =4;
@@ -94,7 +93,6 @@ int main (int argc, char **argv)
             {"search-radius", required_argument, 0, 'F'},
             {"max-candidate-size", required_argument, 0, 'G'},
             {"groundtruth", required_argument, 0, 'H'},
-            {"generate-groundtruth", no_argument, 0, 'I'},
             {NULL, 0, NULL, 0}
         };
 
@@ -252,9 +250,6 @@ int main (int argc, char **argv)
                 break;
             case '7':
                 SIMD_flag = 1;
-                break;
-            case 'I':
-                generate_groundtruth = 1;
                 break;
             default:
                 exit(-1);
@@ -847,121 +842,52 @@ int main (int argc, char **argv)
     std::cout << "The total time of encoding and indexing phase is: " << index_all.count() * 1000.0f << "ms." << std::endl;
     std::cout << "The average query time is " << query_all.count() * 1000.0f / queries_size << "ms." << std::endl;
 
-    if (generate_groundtruth)
-    {
-        std::cout << "-----------------Generating groundtruth-----------------" << std::endl;
-
-        data_type ** result = (data_type **) malloc(sizeof(data_type*) * queries_size);
-        for (int i = 0; i < queries_size; i++)
-        {
-            std::cout << "For the " << i << "-th query." << std::endl;
-            result[i] = (data_type *) malloc(sizeof(data_type) * k_size);
-            data_type * querypoint = (data_type *) malloc(sizeof(data_type) * idx_lsh[0]->settings->data_dimensionality);
-            memcpy(querypoint,&(queryfile[i*idx_lsh[0]->settings->data_dimensionality]), sizeof(data_type)* idx_lsh[0]->settings->data_dimensionality);
-            data_type * distance = (data_type *) malloc(sizeof(data_type) * dataset_size);
-            for (int j = 0; j < dataset_size; j++)
-            {
-                data_type * datapoint = (data_type *) malloc(sizeof(data_type) * idx_lsh[0]->settings->data_dimensionality);
-                memcpy(datapoint,&(rawfile[j*idx_lsh[0]->settings->data_dimensionality]), sizeof(data_type) * idx_lsh[0]->settings->data_dimensionality);
-                distance[j] = euclidean_distance(querypoint, datapoint, idx_lsh[0]->settings->data_dimensionality);
-                free(datapoint);
-            }
-            std::partial_sort(distance, distance + k_size, distance + dataset_size);
-            for (int k = 0; k < k_size; k++)
-            {
-                result[i][k] = distance[k];
-            }
-            free(querypoint);
-            free(distance);
-        }
-
-        int retrived_data_num = 0;
-
-        for (int i = 0; i < queries_size; i++)
-        {
-            for (int j = k_size - 1; j >= 0; j--)
-            {
-                if (nodes[i][j].dist <= result[i][k_size-1]) {
-                    retrived_data_num += (j+1);
-                    break;
-                }
-            }
-        }
-
-        float ratio = 0.0f;
-        for (int i = 0; i < queries_size; i++)
-        {
-            for (int j = 0; j < k_size; j++)
-            {
-                if (result[i][j] == 0) {
-                    ratio += 1.0f;
-                } else {
-                    ratio += sqrt(nodes[i][j].dist) / sqrt(result[i][j]);
-                }
-            }
-        }
-
-        float recall_value = float(retrived_data_num) / (queries_size*k_size);
-        float overall_ratio = ratio / (queries_size * k_size);
-
-        std::cout << "The average recall value is: " << recall_value << std::endl;
-        std::cout << "The overall ratio is: " << overall_ratio << std::endl;
-
-        std::cout << "-----------------Saving groundtruth-----------------" << std::endl;
-        FILE *ifile_groundtruth;
-        ifile_groundtruth = fopen (groundtruth,"wb");
-        for (int i = 0; i < queries_size; i++)
-        {
-            fwrite(result[i], sizeof(float), k_size, ifile_groundtruth);            
-        }
-        fclose(ifile_groundtruth);
-    } else {
-        std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
-        FILE *ifile_groundtruth;
-        ifile_groundtruth = fopen (groundtruth,"rb");
-        if (ifile_groundtruth == NULL) {
-            fprintf(stderr, "File %s not found!\n", groundtruth);
-            exit(-1);
-        }
-        data_type ** result = (data_type **) malloc(sizeof(data_type *) * queries_size);
-        for (int i = 0; i < queries_size; i++)
-        {
-            result[i] = (data_type *) malloc(sizeof(data_type) * k_size);
-            fread(result[i], sizeof(float), k_size, ifile_groundtruth);                
-        }
-
-        int retrived_data_num = 0;
-
-        for (int i = 0; i < queries_size; i++)
-        {
-            for (int j = k_size - 1; j >= 0; j--)
-            {
-                if (nodes[i][j].dist <= result[i][k_size-1]) {
-                    retrived_data_num += (j+1);
-                    break;
-                }
-            }
-        }
-
-        float ratio = 0.0f;
-        for (int i = 0; i < queries_size; i++)
-        {
-            for (int j = 0; j < k_size; j++)
-            {
-                if (result[i][j] == 0) {
-                    ratio += 1.0f;
-                } else {
-                    ratio += sqrt(nodes[i][j].dist) / sqrt(result[i][j]);
-                }
-            }
-        }
-
-        float recall_value = float(retrived_data_num) / (queries_size*k_size);
-        float overall_ratio = ratio / (queries_size * k_size);
-
-        std::cout << "The average recall value is: " << recall_value << std::endl;
-        std::cout << "The overall ratio is: " << overall_ratio << std::endl;
+    // Evaluate the query accuracy (recall and ratio)
+    std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
+    FILE *ifile_groundtruth;
+    ifile_groundtruth = fopen (groundtruth,"rb");
+    if (ifile_groundtruth == NULL) {
+        fprintf(stderr, "File %s not found!\n", groundtruth);
+        exit(-1);
     }
+    data_type ** result = (data_type **) malloc(sizeof(data_type *) * queries_size);
+    for (int i = 0; i < queries_size; i++)
+    {
+        result[i] = (data_type *) malloc(sizeof(data_type) * k_size);
+        fread(result[i], sizeof(float), k_size, ifile_groundtruth);                
+    }
+
+    int retrived_data_num = 0;
+
+    for (int i = 0; i < queries_size; i++)
+    {
+        for (int j = k_size - 1; j >= 0; j--)
+        {
+            if (nodes[i][j].dist <= result[i][k_size-1]) {
+                retrived_data_num += (j+1);
+                break;
+            }
+        }
+    }
+
+    float ratio = 0.0f;
+    for (int i = 0; i < queries_size; i++)
+    {
+        for (int j = 0; j < k_size; j++)
+        {
+            if (result[i][j] == 0) {
+                ratio += 1.0f;
+            } else {
+                ratio += sqrt(nodes[i][j].dist) / sqrt(result[i][j]);
+            }
+        }
+    }
+
+    float recall_value = float(retrived_data_num) / (queries_size*k_size);
+    float overall_ratio = ratio / (queries_size * k_size);
+
+    std::cout << "The average recall value is: " << recall_value << std::endl;
+    std::cout << "The overall ratio is: " << overall_ratio << std::endl;
 
     return 0;
 }

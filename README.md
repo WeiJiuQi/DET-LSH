@@ -67,7 +67,7 @@ Our input dataset file and query file is in binary format without any indice, i.
 The format of benchmark file is:
 
 ```
-{The Euclidean distances of exact k-NN points to each query point, arranged in turn}
+{The squared Euclidean distances of exact k-NN points to each query point, arranged in turn}
 ```
 
 ## Parameters used in Our Paper
