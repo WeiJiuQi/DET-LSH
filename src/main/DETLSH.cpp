@@ -562,6 +562,7 @@ int main (int argc, char **argv)
     std::chrono::duration<float> duration, query_all, index_all;
 
     // Load data
+    dataset_size = dataset_size - 100;
     load_data(dataset, dataset_size);
 
     std::cout << "Actual memory usage before indexing: " << getCurrentRSS() / 1000000 << " MB" << std::endl;
@@ -716,9 +717,7 @@ int main (int argc, char **argv)
     {
         // The second step of query: generate the candidate set of points by obtained priority queues
         start = std::chrono::high_resolution_clock::now();
-
-        float localannbsf=FLT_MAX;
-        long int currentposition=0;   
+ 
         int data_loaded = 0; 
 
         std::unordered_map<long int, bool> isCandidate;
