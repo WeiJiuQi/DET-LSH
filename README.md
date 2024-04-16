@@ -2,10 +2,68 @@
 
 This is the source code of the method proposed in paper: **DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search (accepted by PVLDB 2024)**.
 
+## Dependency
+
++ autoconf 2.71
++ automake 1.16.5
++ gcc version: 9.5.0 (If the compilation fails, try to roll back gcc to this version)
++ g++ version: 11.4.0
+
 ## Compilation
+
+### Step 1: Generate makefile
 
 ```
 ./configure
+```
+
+### Step 2: Generate static link library
+
+Modify file *Makefile.am*, remove (or annotate) the command that generates the executable file, like following:
+
+```
+AUTOMAKE_OPTIONS = subdir-objects
+ACLOCAL_AMFLAGS =  ${ACLOCAL_FLAGS}
+
+lib_LIBRARIES	= lib/libutils.a
+lib_libutils_a_SOURCES = src/utils/isax/isax_first_buffer_layer.c src/utils/isax/isax_index.c src/utils/isax/isax_node.c src/utils/isax/isax_node_buffer.c src/utils/isax/isax_node_record.c src/utils/isax/isax_node_split.c src/utils/isax/pqueue.c src/utils/sax/sax.c src/utils/sax/ts.c src/utils/query_support.c src/utils/indexing_support.c src/utils/encoding_support.c
+lib_libutils_a_CFLAGS =-I/opt/local/include -Iinclude/ -march=native -mavx -mavx2 -msse3 -fopenmp
+
+# bin_PROGRAMS = bin/DETLSH
+# bin_DETLSH_SOURCES = src/main/DETLSH.cpp
+# bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
+# in_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
+# bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -mavx -mavx2 -msse3
+```
+
+Then:
+
+```
+make
+```
+
+### Step 3: Generate executable file
+
+Modify file *Makefile.am*, add (or remove annotation) the command that generates the executable file, like following:
+
+```
+AUTOMAKE_OPTIONS = subdir-objects
+ACLOCAL_AMFLAGS =  ${ACLOCAL_FLAGS}
+
+lib_LIBRARIES	= lib/libutils.a
+lib_libutils_a_SOURCES = src/utils/isax/isax_first_buffer_layer.c src/utils/isax/isax_index.c src/utils/isax/isax_node.c src/utils/isax/isax_node_buffer.c src/utils/isax/isax_node_record.c src/utils/isax/isax_node_split.c src/utils/isax/pqueue.c src/utils/sax/sax.c src/utils/sax/ts.c src/utils/query_support.c src/utils/indexing_support.c src/utils/encoding_support.c
+lib_libutils_a_CFLAGS =-I/opt/local/include -Iinclude/ -march=native -mavx -mavx2 -msse3 -fopenmp
+
+bin_PROGRAMS = bin/DETLSH
+bin_DETLSH_SOURCES = src/main/DETLSH.cpp
+bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
+bin_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
+bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -mavx -mavx2 -msse3
+```
+
+Then:
+
+```
 make
 ```
 
