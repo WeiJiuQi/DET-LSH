@@ -1,6 +1,6 @@
 # DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search
 
-This is the source code of the method proposed in paper: **DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search (submitted to PVLDB 2024)**.
+This is the source code of the method proposed in paper: **DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search (accepted by PVLDB 2024)**.
 
 ## Compilation
 
