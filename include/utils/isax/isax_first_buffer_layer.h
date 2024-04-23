@@ -54,6 +54,7 @@ parallel_first_buffer_layer * initialize_pRecBuf(int initial_buffer_size, int ma
 
 void destroy_fbl(first_buffer_layer *fbl);
 void destroy_pRecBuf(parallel_first_buffer_layer *fbl,int prewokernumber);
+void destroy_pRecBufdet(parallel_first_buffer_layer *fbl,int prewokernumber);
 isax_node * insert_to_fbl(first_buffer_layer *fbl, sax_type *sax,
                           file_position_type * pos, root_mask_type mask, 
                           isax_index *index);

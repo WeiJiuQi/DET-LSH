@@ -30,9 +30,6 @@ typedef struct {
     
     int data_dimensionality;
     int LSH_dimensionality;
-	
-	int tight_bound;
-	int aggressive_check;
     
     int sax_byte_size;
     int position_byte_size;
@@ -124,7 +121,7 @@ isax_index_settings * isax_index_settings_init (const char * root_directory,
                                                 int max_total_buffer_size, 
                                                 int initial_fbl_buffer_size,
                                                 int total_loaded_leaves,
-												int tight_bound, int aggressive_check, int new_index,
+												int new_index,
                                                 char SIMD_flag,
                                                 int sample_size,
                                                 int sample_type);

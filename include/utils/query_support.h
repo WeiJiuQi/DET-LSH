@@ -91,7 +91,6 @@ void traverse_subtree(float *lsh,isax_node *node,isax_index *index,float search_
 
 int N_PQUEUE;
 
-int maxquerythread;
-int maxreadthread;
+int num_thread;
 
 #endif

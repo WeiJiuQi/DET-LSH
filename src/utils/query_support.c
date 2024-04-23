@@ -73,12 +73,12 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
 
     isax_node *current_root_node = index->first_node;
 
-    pthread_t threadid[maxquerythread];
-    DETLSH_workerdata workerdata[maxquerythread];
+    pthread_t threadid[num_thread];
+    DETLSH_workerdata workerdata[num_thread];
     pthread_mutex_t lock_queue=PTHREAD_MUTEX_INITIALIZER,lock_current_root_node=PTHREAD_MUTEX_INITIALIZER;
     pthread_rwlock_t lock_bsf=PTHREAD_RWLOCK_INITIALIZER;
     pthread_barrier_t lock_barrier;
-    pthread_barrier_init(&lock_barrier, NULL, maxquerythread);
+    pthread_barrier_init(&lock_barrier, NULL, num_thread);
  
     for (int i = 0; i < N_PQUEUE; i++)
     {
@@ -87,7 +87,7 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         pthread_mutex_init(&ququelock[i], NULL);
     }
 
-    for (int i = 0; i < maxquerythread; i++)
+    for (int i = 0; i < num_thread; i++)
     {
         workerdata[i].lsh=lsh;
         workerdata[i].data_point=data_point;
@@ -104,11 +104,11 @@ pqueue_t ** range_search_lsh (data_type *data_point, data_type *lsh, isax_index 
         workerdata[i].search_radius=search_radius;
     }  
     
-    for (int i = 0; i < maxquerythread; i++)
+    for (int i = 0; i < num_thread; i++)
     {
         pthread_create(&(threadid[i]),NULL,range_search_worker,(void*)&(workerdata[i]));
     }
-    for (int i = 0; i < maxquerythread; i++)
+    for (int i = 0; i < num_thread; i++)
     {
         pthread_join(threadid[i],NULL);
     }

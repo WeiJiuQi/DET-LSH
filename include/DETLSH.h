@@ -22,8 +22,10 @@
 #include <random>
 #include <string>
 #include <numeric>
-#include <chrono>
 #include <unordered_map>
+#include <sys/sysinfo.h>
+#include "immintrin.h"
+#include <cassert>
 
 extern "C" {
 #include "utils/sax/sax.h"
@@ -38,13 +40,14 @@ extern "C" {
 isax_index **idx_lsh;
 void INThandler(int);
 
-void breakpoints_selection(isax_index *index, const char *ifilename, long int data_point_num, int maxquerythread, data_type * rawfile);
+void breakpoints_selection(isax_index *index, const char *ifilename, long int data_point_num, data_type * rawfile);
 void* sampling_worker(void *transferdata);
 void* breakpoints_selection_worker(void *transferdata);
 
-void load_data(char * dataset, long int dataset_size);
+void load_data(char * dataset, long int dataset_size, int data_dimensionality);
 
 float euclidean_distance(data_type * t, data_type * s, int size);
+float euclidean_distance_SIMD(float * t, float * s, int size);
 
 struct candidate_node{
     float dist;
@@ -88,5 +91,63 @@ static size_t getCurrentRSS() {
     return (size_t)0L;          /* Unsupported. */
 #endif
 }
+
+namespace faiss {
+
+/*********************************************************
+ * Optimized distance/norm/inner prod computations
+ *********************************************************/
+
+/// Squared L2 distance between two vectors
+float fvec_L2sqr_avx512(
+        const float* x,
+        const float* y,
+        size_t d);
+
+/// inner product
+float fvec_inner_product_avx512(
+        const float* x,
+        const float* y,
+        size_t d);
+
+/// L1 distance
+float fvec_L1_avx512(
+        const float* x,
+        const float* y,
+        size_t d);
+
+/// infinity distance
+float fvec_Linf_avx512(
+        const float* x,
+        const float* y,
+        size_t d);
+
+/// popcnt
+int popcnt_AVX512VBMI_lookup(
+        const uint8_t* data,
+        const size_t n);
+
+/// binary distance
+int xor_popcnt_AVX512VBMI_lookup(
+        const uint8_t* data1,
+        const uint8_t* data2,
+        const size_t n);
+
+int or_popcnt_AVX512VBMI_lookup(
+        const uint8_t* data1,
+        const uint8_t* data2,
+        const size_t n);
+
+int and_popcnt_AVX512VBMI_lookup(
+        const uint8_t* data1,
+        const uint8_t* data2,
+        const size_t n);
+
+float jaccard_AVX512(
+        const uint8_t* a,
+        const uint8_t* b,
+        size_t n);
+
+} // namespace faiss
 
 #endif 

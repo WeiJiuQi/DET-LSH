@@ -26,7 +26,7 @@ struct first_buffer_layer * initialize_fbl(int initial_buffer_size, int number_o
     } 
            
     // Allocate a set of soft buffers to hold pointers to the hard buffer
-    fbl->soft_buffers = malloc(sizeof(fbl_soft_buffer) * number_of_buffers);
+    fbl->soft_buffers = malloc(sizeof(parallel_fbl_soft_buffer) * number_of_buffers);
     fbl->current_record_index = 0;
     fbl->current_record = fbl->hard_buffer;
     int i;
@@ -238,7 +238,7 @@ enum response flush_fbl(first_buffer_layer *fbl, isax_index *index)
 
 void destroy_fbl(first_buffer_layer *fbl) {
 
-    free(fbl->hard_buffer);
+    // free(fbl->hard_buffer);
     free(fbl->soft_buffers);
     free(fbl);
 }
@@ -247,7 +247,7 @@ void destroy_pRecBuf(parallel_first_buffer_layer *fbl,int prewokernumber) {
 
     for (int j=0; j<fbl->number_of_buffers; j++) 
     {
-         parallel_fbl_soft_buffer *current_fbl_node = &fbl->soft_buffers[j];
+        parallel_fbl_soft_buffer *current_fbl_node = &fbl->soft_buffers[j];
         if (!current_fbl_node->initialized) {
             continue;
         }
@@ -268,4 +268,25 @@ void destroy_pRecBuf(parallel_first_buffer_layer *fbl,int prewokernumber) {
     }
     free(fbl->soft_buffers);
     free(fbl);
+}
+
+
+void destroy_pRecBufdet(parallel_first_buffer_layer *fbl,int prewokernumber) {
+
+    for (int j=0; j<fbl->number_of_buffers; j++) 
+    {
+        parallel_fbl_soft_buffer *current_fbl_node = &fbl->soft_buffers[j];
+        if (!current_fbl_node->initialized) {
+            continue;
+        }
+        for (int k = 0; k < prewokernumber; k++)
+        {   
+            if(current_fbl_node->sax_records[k]!=NULL)
+            {
+                free((current_fbl_node->sax_records[k]));
+                current_fbl_node->sax_records[k]=NULL;
+            }  
+        }
+        free(current_fbl_node->sax_records);
+    }
 }

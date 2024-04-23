@@ -365,7 +365,7 @@ lib_libutils_a_CFLAGS = -I/opt/local/include -Iinclude/ -march=native -mavx -mav
 bin_DETLSH_SOURCES = src/main/DETLSH.cpp
 bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
 bin_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
-bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -mavx -mavx2 -msse3
+bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -march=native -mavx -mavx2 -msse3
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

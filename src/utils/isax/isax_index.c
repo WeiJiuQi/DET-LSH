@@ -32,7 +32,7 @@ isax_index_settings * isax_index_settings_init(const char * root_directory, int 
                                                 int max_leaf_size, int min_leaf_size,
                                                 int initial_leaf_buffer_size,
                                                 int max_total_buffer_size, int initial_fbl_buffer_size,
-                                                int total_loaded_leaves, int tight_bound, int aggressive_check, int new_index,
+                                                int total_loaded_leaves, int new_index,
                                                 char SIMD_flag, int sample_size,
                                                 int sample_type)
 {
@@ -91,10 +91,6 @@ isax_index_settings * isax_index_settings_init(const char * root_directory, int 
     settings->max_leaf_size = max_leaf_size;
     settings->min_leaf_size = min_leaf_size;
     settings->initial_leaf_buffer_size = initial_leaf_buffer_size;
-
-	
-	settings->tight_bound = tight_bound;
-    settings->aggressive_check = aggressive_check;
 	
     settings->sax_byte_size = (sizeof(sax_type) * LSH_dimensionality);
     settings->point_byte_size = (sizeof(data_type) * data_dimensionality);
@@ -1683,8 +1679,6 @@ void index_write(isax_index *index)
 	int max_total_buffer_size = index->settings->max_total_buffer_size;
 	int initial_fbl_buffer_size = index->settings->initial_fbl_buffer_size;
 	int total_loaded_leaves = index->settings->total_loaded_leaves;
-	int tight_bound = index->settings->tight_bound;
-	int aggressive_check = index->settings->aggressive_check;
 	int new_index = 0;
 	// SETTINGS DATA
 	fwrite(&raw_filename_size, sizeof(int), 1, file);
@@ -1698,8 +1692,6 @@ void index_write(isax_index *index)
 	fwrite(&max_total_buffer_size, sizeof(int), 1, file);
 	fwrite(&initial_fbl_buffer_size, sizeof(int), 1, file);
 	fwrite(&total_loaded_leaves, sizeof(int), 1, file);
-	fwrite(&tight_bound, sizeof(int), 1, file);
-	fwrite(&aggressive_check, sizeof(int), 1, file);
 	// FBL DATA AND NODES
 	int j;
 	for (j=0; j<index->fbl->number_of_buffers; j++) {
@@ -1743,8 +1735,6 @@ void index_mRecBuf_write(isax_index *index)
     int max_total_buffer_size = index->settings->max_total_buffer_size;
     int initial_fbl_buffer_size = index->settings->initial_fbl_buffer_size;
     int total_loaded_leaves = index->settings->total_loaded_leaves;
-    int tight_bound = index->settings->tight_bound;
-    int aggressive_check = index->settings->aggressive_check;
     int new_index = 0;
     // SETTINGS DATA
     fwrite(&raw_filename_size, sizeof(int), 1, file);
@@ -1758,8 +1748,6 @@ void index_mRecBuf_write(isax_index *index)
     fwrite(&max_total_buffer_size, sizeof(int), 1, file);
     fwrite(&initial_fbl_buffer_size, sizeof(int), 1, file);
     fwrite(&total_loaded_leaves, sizeof(int), 1, file);
-    fwrite(&tight_bound, sizeof(int), 1, file);
-    fwrite(&aggressive_check, sizeof(int), 1, file);
 
     int sample_size = index->settings->sample_size;
     int sample_type = index->settings->sample_type;
@@ -1820,8 +1808,6 @@ isax_index * index_read(const char* root_directory) {
 	int max_total_buffer_size = 0;
 	int initial_fbl_buffer_size = 0;
 	int total_loaded_leaves = 0;
-	int tight_bound = 0;
-	int aggressive_check = 0;
 	int new_index = 0;
 
 	fread(&raw_filename_size, sizeof(int), 1, file);
@@ -1838,8 +1824,6 @@ isax_index * index_read(const char* root_directory) {
 	fread(&max_total_buffer_size, sizeof(int), 1, file);
 	fread(&initial_fbl_buffer_size, sizeof(int), 1, file);
 	fread(&total_loaded_leaves, sizeof(int), 1, file);
-	fread(&tight_bound, sizeof(int), 1, file);
-	fread(&aggressive_check, sizeof(int), 1, file);
 
 	isax_index_settings *idx_settings = isax_index_settings_init(root_directory,
 																data_dimensionality,
@@ -1851,8 +1835,6 @@ isax_index * index_read(const char* root_directory) {
 																max_total_buffer_size,
 																initial_fbl_buffer_size,
 																total_loaded_leaves,
-																tight_bound,
-																aggressive_check,
 																0,false,1,1);
 	idx_settings->raw_filename = malloc(sizeof(char) * 256);
 	strcpy(idx_settings->raw_filename, raw_filename);

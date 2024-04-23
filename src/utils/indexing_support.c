@@ -30,12 +30,12 @@ void index_creation(long int data_point_num, isax_index *index)
     long int data_point_loaded = 0;
     int i;
     int node_counter=0;
-    pthread_t threadid[maxquerythread];
-    buffer_data_inmemory *input_data=malloc(sizeof(buffer_data_inmemory)*(maxquerythread));
+    pthread_t threadid[num_thread];
+    buffer_data_inmemory *input_data=malloc(sizeof(buffer_data_inmemory)*(num_thread));
     // index->sax_cache= malloc(sizeof(sax_type) * index->settings->LSH_dimensionality*data_point_num);
     // index->lsh_cache= malloc(sizeof(data_type) * index->settings->LSH_dimensionality*data_point_num);
     pthread_barrier_t lock_barrier1;
-    pthread_barrier_init(&lock_barrier1, NULL, maxquerythread);
+    pthread_barrier_init(&lock_barrier1, NULL, num_thread);
 
     pthread_mutex_t lock_firstnode=PTHREAD_MUTEX_INITIALIZER;
     
@@ -44,27 +44,27 @@ void index_creation(long int data_point_num, isax_index *index)
                             pow(2, index->settings->LSH_dimensionality), 
                             index->settings->max_total_buffer_size+DISK_BUFFER_SIZE*(PROGRESS_CALCULATE_THREAD_NUMBER-1), index);
     
-    for ( i = 0; i < maxquerythread; i++)
+    for ( i = 0; i < num_thread; i++)
     {   
         input_data[i].index=index;
         input_data[i].lock_firstnode =&lock_firstnode;
         input_data[i].data_point=rawfile;
         input_data[i].workernumber=i;
-        input_data[i].total_workernumber=maxquerythread;
-        input_data[i].start_number=i*(data_point_num/maxquerythread);
-        input_data[i].stop_number=(i+1)*(data_point_num/maxquerythread);
+        input_data[i].total_workernumber=num_thread;
+        input_data[i].start_number=i*(data_point_num/num_thread);
+        input_data[i].stop_number=(i+1)*(data_point_num/num_thread);
         input_data[i].node_counter=&node_counter;
         input_data[i].lock_barrier1=&lock_barrier1;
     }
 
-    input_data[maxquerythread-1].start_number=(maxquerythread-1)*(data_point_num/maxquerythread);
-    input_data[maxquerythread-1].stop_number=data_point_num;
-    for (i = 0; i < maxquerythread; i++)
+    input_data[num_thread-1].start_number=(num_thread-1)*(data_point_num/num_thread);
+    input_data[num_thread-1].stop_number=data_point_num;
+    for (i = 0; i < num_thread; i++)
     {
         pthread_create(&(threadid[i]),NULL,index_creation_worker,(void*)&(input_data[i]));
     }
 
-    for (i = 0; i < maxquerythread; i++)
+    for (i = 0; i < num_thread; i++)
     {
         pthread_join(threadid[i],NULL);
     }
@@ -72,7 +72,7 @@ void index_creation(long int data_point_num, isax_index *index)
     index->sax_cache_size=index->total_records;
     free(input_data);
 
-    // destroy_fbl(index->fbl);
+    destroy_pRecBufdet((parallel_first_buffer_layer*)(index->fbl),num_thread);
     fprintf(stderr, ">>> Finished encoding and indexing.\n");
 }
 
@@ -99,9 +99,6 @@ void* index_creation_worker(void *transferdata)
 
     for (i=start_number;i<stop_number;i++)
     {
-
-        // lsh = index->lsh_mem_array[i];
-
         gettimeofday(&transformation_time_start, NULL);
 
         if(encoding(index, sax, index->lsh_mem_array[i]) == SUCCESS) 
@@ -111,8 +108,6 @@ void* index_creation_worker(void *transferdata)
             gettimeofday(&indexing_time_start, NULL);
 
             *pos = (file_position_type)(i*index->settings->data_dimensionality);
-
-            // memcpy(&(index->lsh_cache[i*index->settings->LSH_dimensionality]),lsh, sizeof(data_type)* index->settings->LSH_dimensionality);
 
             insert_to_index(index, sax, pos, ((buffer_data_inmemory*)transferdata)->lock_firstnode,((buffer_data_inmemory*)transferdata)->workernumber,((buffer_data_inmemory*)transferdata)->total_workernumber);
             
