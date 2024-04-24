@@ -73,7 +73,7 @@ make
 
 ```
 cd ./bin
-./DETLSH --dataset $PATH_TO_DATASET$ --leaf-size $MAX_SIZE$ --dataset-size $n$  --queries $PATH_TO_QUERY$ --queries-size $QUERY_SIZE$ --sample-size $SAMPLE_SIZE$ --sample-type $SAMPLE_TYPE$ --k-size $k$ --data-dimensionality $DIMENSIONALITY$ --l-size $L$ --search-radius $r$ --max-candidate-size $beta*n$ --benchmark $PATH_TO_BENCHMARK$
+./DETLSH --dataset $PATH_TO_DATASET$ --leaf-size $MAX_SIZE$ --dataset-size $n$  --queries $PATH_TO_QUERY$ --queries-size $QUERY_SIZE$ --sample-size $SAMPLE_SIZE$ --sample-type $SAMPLE_TYPE$ --k-size $k$ --data-dimensionality $DIMENSIONALITY$ --l-size $L$ --search-radius $r$ --max-candidate-size $beta*n$ --benchmark $PATH_TO_BENCHMARK$ --cpu-type $ct$ --queue-number $qn$
 ```
 
 + --dataset: the path to dataset file
@@ -90,6 +90,8 @@ cd ./bin
 + --search-radius: r, a float number, the initial search radius
 + --max-candidate-size: a positive integer, the maximum number of returned points, i.e., beta*n+k
 + --benchmark: the path to benchmark file
++ --cpu-type: core (threads) usage when performing parallel indexing and querying, default setting is --cpu-type = 1 (single thread), recommended setting for parallelization is  --cpu-type = 81 or 82 (8 threads in a single cpu)
++ --queue-number: number of priority queues used when performing parallel querying, default setting is --queue-number = 1 ( when single thread), recommended setting for parallelization is  --queue-number = 1 (half of threads used)
 
 ## Dataset, Query, and Benchmark
 
