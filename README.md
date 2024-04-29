@@ -90,8 +90,8 @@ cd ./bin
 + --search-radius: r, a float number, the initial search radius
 + --max-candidate-size: a positive integer, the maximum number of returned points, i.e., beta*n+k
 + --benchmark: the path to benchmark file
-+ --cpu-type: core (threads) usage when performing parallel indexing and querying, default setting is --cpu-type = 1 (single thread), recommended setting for parallelization is  --cpu-type = 81 or 82 (8 threads in a single cpu)
-+ --queue-number: number of priority queues used when performing parallel querying, default setting is --queue-number = 1 ( when single thread), recommended setting for parallelization is  --queue-number = 1 (half of threads used)
++ --cpu-type: core (threads) usage when performing parallel indexing and querying, default setting is --cpu-type = 1 (single thread), recommended setting for parallelization is  --cpu-type = 81 or 82 (8 threads in a single cpu or in two cpus)
++ --queue-number: number of priority queues used when performing parallel querying, default setting is --queue-number = 1 (single thread), recommended setting for parallelization is  --queue-number = 4 (half of threads used)
 
 ## Dataset, Query, and Benchmark
 

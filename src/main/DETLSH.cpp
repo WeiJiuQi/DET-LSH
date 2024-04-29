@@ -722,8 +722,8 @@ int main (int argc, char **argv)
         }                             
     } 
 
-    struct timeval start_phase_q, end_phase_q;
-    long query_phase1, query_phase2, query_phase3, query_phase4;
+    struct timeval start_phase_q, end_phase_q, start_1, end_1, start_2, end_2, start_3, end_3, start_4, end_4, start_5, end_5, start_6, end_6;
+    long query_phase1, query_phase2, query_phase3, query_phase4, query_1, query_2, query_3, query_4, query_5, query_6;
     
     std::cout << "-----------------Start query-----------------" << std::endl;
     // The first step of query: generate the priority queue of candidate leaf nodes for each query
@@ -847,128 +847,8 @@ int main (int argc, char **argv)
                 mindist_in_every_index[mindist_index] = temp_mindist;
                 num_queue[mindist_index] = temp_index;
             }
-        }
-        // else {
-        //     gettimeofday(&start_qq, NULL);
-
-        //     std::vector<query_result*> leaf_nodes;
-
-        //     for (int i = 0; i < l_size; i++) {
-        //         for (int j = 0; j < N_PQUEUE; j++) {
-        //             while (pqueue_size(idx_lsh[i]->range_queue_result[q_loaded].pq[j]) > 0) {
-        //                 leaf_nodes.push_back((query_result *) pqueue_pop(idx_lsh[i]->range_queue_result[q_loaded].pq[j]));
-        //             }
-        //         }
-        //     }
-
-        //     sort(leaf_nodes.begin(), leaf_nodes.end(), CompLess);
-
-        //     gettimeofday(&end_qq, NULL);
-        //     query_qq += (1000000 * (end_qq.tv_sec - start_qq.tv_sec) + end_qq.tv_usec - start_qq.tv_usec);
-
-        //     std::vector<bool> isCandidate(dataset_size);
-
-        //     int max_candidate_each_thread = max_candidate_size / num_thread;
-        //     int * num_candidate_each_thread = new int [num_thread]();
-        //     int finished_thread = 0;
-        //     int continued_thread = 0;
-        //     int last_node_index = 0;
-        //     int left_candidate_num = 0;
-        //     bool * stop_to_traverse = new bool[num_thread]();
-        //     bool continue_flag = false;
-        //     float min_ratio = 0.8;
-        //     int min_obtain_from_para = min_ratio * max_candidate_size;
-
-        //     omp_lock_t lock1, lock2;
-        //     omp_init_lock(&lock1);
-        //     omp_init_lock(&lock2);
-
-        //     #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
-        //     for (int i = 0; i < leaf_nodes.size(); i++) {
-
-        //         int tid = omp_get_thread_num();
-
-        //         if (stop_to_traverse[tid]) {
-        //             continue;
-        //         }
-
-        //         for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
-        //             isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
-        //         }
-
-        //         num_candidate_each_thread[tid] += leaf_nodes[i]->node->buffer->partial_buffer_size;
-
-        //         if (num_candidate_each_thread[tid] > max_candidate_each_thread) {
-        //             omp_set_lock(&lock1);
-        //             finished_thread++;
-        //             if (i > last_node_index) {
-        //                 last_node_index = i;
-        //             }
-        //             omp_unset_lock(&lock1);
-                    
-        //             while(1) {
-        //                 if (finished_thread == num_thread) {
-        //                     break;
-        //                 }
-        //             }
-
-        //             if (tid == 0) {
-        //                 omp_set_lock(&lock2);
-        //                 num_candidate_each_thread[tid] = 0;
-        //                 if (std::count(isCandidate.begin(), isCandidate.end(), true) > min_obtain_from_para) {
-        //                     stop_to_traverse[tid] = true;
-        //                 }
-        //                 left_candidate_num = max_candidate_size - std::count(isCandidate.begin(), isCandidate.end(), true);
-        //                 max_candidate_each_thread = left_candidate_num / num_thread;
-        //                 finished_thread = 0;
-        //                 continue_flag = true;
-        //                 omp_unset_lock(&lock2);
-        //                 while(1) {
-        //                     if (continued_thread == num_thread - 1) {
-        //                         continue_flag = false;
-        //                         continued_thread = 0;
-        //                         break;
-        //                     }
-        //                 }
-        //             } else {
-        //                 while(1) {
-        //                     if (continue_flag == true) {
-        //                         omp_set_lock(&lock2);
-        //                         num_candidate_each_thread[tid] = 0;
-        //                         if (std::count(isCandidate.begin(), isCandidate.end(), true) > min_obtain_from_para) {
-        //                             stop_to_traverse[tid] = true;
-        //                         }
-        //                         continued_thread++;
-        //                         omp_unset_lock(&lock2);
-        //                         break;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-
-        //     if (left_candidate_num > 0) {
-        //         for (int i = last_node_index + 1; i < leaf_nodes.size(); i++) {
-        //             for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
-        //                 if (isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] == false && left_candidate_num > 0) {
-        //                     isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
-        //                     left_candidate_num--;
-        //                 }
-        //             }
-        //             if (left_candidate_num == 0) {
-        //                 break;
-        //             }
-        //         }
-        //     }
-
-        //     for (int i = 0; i < dataset_size; i++) {
-        //         if (isCandidate[i] == true) {
-        //             nodes[q_loaded][data_loaded].currentposition = i;
-        //             data_loaded++;
-        //         }
-        //     }
-        // }
-        else {
+        } else {
+            gettimeofday(&start_1, NULL);
             std::vector<query_result*> leaf_nodes;
 
             for (int i = 0; i < l_size; i++) {
@@ -978,20 +858,27 @@ int main (int argc, char **argv)
                     }
                 }
             }
+            gettimeofday(&end_1, NULL);
+            query_1 += (1000000 * (end_1.tv_sec - start_1.tv_sec) + end_1.tv_usec - start_1.tv_usec);
 
+            gettimeofday(&start_2, NULL);
             sort(leaf_nodes.begin(), leaf_nodes.end(), CompLess);
+            gettimeofday(&end_2, NULL);
+            query_2 += (1000000 * (end_2.tv_sec - start_2.tv_sec) + end_2.tv_usec - start_2.tv_usec);
 
+            gettimeofday(&start_3, NULL);
             std::vector<bool> isCandidate(dataset_size);
 
             int max_candidate_each_thread = max_candidate_size / num_thread;
             int * num_candidate_each_thread = new int [num_thread]();
             int finished_thread = 0;
             int last_node_index = 0;
+            int * last_node_index_each_thread = new int [num_thread]();
             bool stop_to_traverse = false;
 
             omp_lock_t lock;
             omp_init_lock(&lock);
-
+            
             #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
             for (int i = 0; i < leaf_nodes.size(); i++) {
                 if (stop_to_traverse) {
@@ -999,6 +886,8 @@ int main (int argc, char **argv)
                 }
 
                 int tid = omp_get_thread_num();
+
+                last_node_index_each_thread[tid] = i;
 
                 for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
                     isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
@@ -1009,9 +898,6 @@ int main (int argc, char **argv)
                 if (num_candidate_each_thread[tid] > max_candidate_each_thread) {
                     omp_set_lock(&lock);
                     finished_thread++;
-                    if (i > last_node_index) {
-                        last_node_index = i;
-                    }
                     omp_unset_lock(&lock);
                     
                     while(1) {
@@ -1022,43 +908,25 @@ int main (int argc, char **argv)
                     }
                 }
             }
+            last_node_index = *std::max_element(last_node_index_each_thread, last_node_index_each_thread + num_thread);
+            gettimeofday(&end_3, NULL);
+            query_3 += (1000000 * (end_3.tv_sec - start_3.tv_sec) + end_3.tv_usec - start_3.tv_usec);
 
-            // #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
-            // for (int i = 0; i < leaf_nodes.size(); i++) {
-            //     if (stop_to_traverse) {
-            //         continue;
-            //     }
+            gettimeofday(&start_4, NULL);
+            int obtained_candidate_num = 0;
+            #pragma omp parallel for reduction(+:obtained_candidate_num) num_threads(num_thread)
+            for (int i = 0; i < dataset_size; i++) {
+                if (isCandidate[i] == true) {
+                    obtained_candidate_num++;
+                }
+            }
+            int left_candidate_num = max_candidate_size - obtained_candidate_num;
+            gettimeofday(&end_4, NULL);
+            query_4 += (1000000 * (end_4.tv_sec - start_4.tv_sec) + end_4.tv_usec - start_4.tv_usec);
 
-            //     //int tid = omp_get_thread_num();
-
-            //     for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
-            //         isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
-            //     }
-                
-            //     //num_candidate_each_thread[0] += leaf_nodes[i]->node->buffer->partial_buffer_size;
-            //     __sync_fetch_and_add(&num_candidate_each_thread[0],leaf_nodes[i]->node->buffer->partial_buffer_size);
-
-            //     if (num_candidate_each_thread[0] > max_candidate_size) {
-            //         omp_set_lock(&lock);
-            //         //finished_thread++;
-            //         if (i > last_node_index) {
-            //             last_node_index = i;
-            //         }
-            //         stop_to_traverse = true;
-            //         omp_unset_lock(&lock);
-                    
-            //         // while(1) {
-            //         //     if (finished_thread == num_thread) {
-            //         //         stop_to_traverse = true;
-            //         //         break;
-            //         //     }
-            //         // }
-            //     }
-            // }
-
-            int left_candidate_num = max_candidate_size - std::count(isCandidate.begin(), isCandidate.end(), true);
-
-            if (left_candidate_num > 0) {
+            gettimeofday(&start_5, NULL);
+            if (left_candidate_num > 0 && last_node_index != leaf_nodes.size() - 1) 
+            {
                 for (int i = last_node_index + 1; i < leaf_nodes.size(); i++) {
                     for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
                         if (isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] == false && left_candidate_num > 0) {
@@ -1071,17 +939,30 @@ int main (int argc, char **argv)
                     }
                 }
             }
+            gettimeofday(&end_5, NULL);
+            query_5 += (1000000 * (end_5.tv_sec - start_5.tv_sec) + end_5.tv_usec - start_5.tv_usec);
 
+            gettimeofday(&start_6, NULL);
+            std::vector<std::vector<candidate_node>> candidate_each_thread(num_thread);
+            #pragma omp parallel for num_threads(num_thread)
             for (int i = 0; i < dataset_size; i++) {
                 if (isCandidate[i] == true) {
-                    nodes[q_loaded][data_loaded].currentposition = i;
-                    data_loaded++;
+                    candidate_each_thread[omp_get_thread_num()].push_back(candidate_node(i));
                 }
             }
+
+            for (int i = 0; i < num_thread; i++) {
+                std::copy(candidate_each_thread[i].begin(), candidate_each_thread[i].begin() + candidate_each_thread[i].size(), nodes[q_loaded] + data_loaded);
+                data_loaded += candidate_each_thread[i].size();
+            }
+
+            gettimeofday(&end_6, NULL);
+            query_6 += (1000000 * (end_6.tv_sec - start_6.tv_sec) + end_6.tv_usec - start_6.tv_usec);
         }
         gettimeofday(&end_phase_q, NULL);
         query_phase2 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
 
+        // The third step of query: obtain the k-NN from the points in the candidate set
         gettimeofday(&start_phase_q, NULL);
         if (num_thread == 1) {
             for (int i = 0; i < data_loaded; i++) {
@@ -1097,7 +978,7 @@ int main (int argc, char **argv)
         query_phase3 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
 
         gettimeofday(&start_phase_q, NULL);
-        // The third step of query: obtain the k-NN from the points in the candidate set
+        
         if (k_size < data_loaded) {
             std::partial_sort(nodes[q_loaded], nodes[q_loaded] + k_size, nodes[q_loaded] + data_loaded);
         } else {
@@ -1120,6 +1001,12 @@ int main (int argc, char **argv)
     std::cout << "The average time of query phase2 is " << query_phase2 / queries_size / 1000.0 << "ms." << std::endl;
     std::cout << "The average time of query phase3 is " << query_phase3 / queries_size / 1000.0 << "ms." << std::endl;
     std::cout << "The average time of query phase4 is " << query_phase4 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_1 is " << query_1 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_2 is " << query_2 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_3 is " << query_3 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_4 is " << query_4 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_5 is " << query_5 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query2_6 is " << query_6 / queries_size / 1000.0 << "ms." << std::endl;
 
     std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
     FILE *ifile_groundtruth;

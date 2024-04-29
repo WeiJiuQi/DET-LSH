@@ -55,6 +55,7 @@ float euclidean_distance_SIMD(float * t, float * s, int size);
 struct candidate_node{
     float dist;
     long int currentposition;
+    candidate_node(long int position) :currentposition(position){};
     bool operator < (const candidate_node node) const {
 		return this->dist < node.dist;
 	}
