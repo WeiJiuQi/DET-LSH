@@ -128,7 +128,7 @@ Our input dataset file and query file is in binary format without any indice, i.
 The format of benchmark file is:
 
 ```
-{The index of exact k-NN points in the dataset, arranged in turn for each query point}
+{The index (type: long int) of exact k-NN points in the dataset, arranged in turn for each query point}
 ```
 
 ## Parameters used in Our Paper

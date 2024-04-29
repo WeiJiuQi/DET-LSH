@@ -24,6 +24,7 @@ typedef struct query_result {
     size_t pqueue_position;
 } query_result;
 
+
 typedef struct index_query_result {
     int number_of_index;
 	query_result** result;

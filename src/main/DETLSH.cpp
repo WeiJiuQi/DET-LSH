@@ -369,6 +369,82 @@ int main (int argc, char **argv)
         CPU_SET(11, &mask);
         num_thread=12;
     }
+    else if (cpu_control_type==141)
+    {
+        CPU_SET(0, &mask);
+        CPU_SET(2, &mask);
+        CPU_SET(4, &mask);
+        CPU_SET(6, &mask);
+        CPU_SET(8, &mask);
+        CPU_SET(10, &mask);
+        CPU_SET(12, &mask);
+        CPU_SET(14, &mask);
+        CPU_SET(16, &mask);
+        CPU_SET(18, &mask);
+        CPU_SET(20, &mask);
+        CPU_SET(22, &mask);
+        CPU_SET(24, &mask);
+        CPU_SET(26, &mask);
+        num_thread=14;
+    }
+    else if (cpu_control_type==142)
+    {
+        CPU_SET(0, &mask);
+        CPU_SET(1, &mask);
+        CPU_SET(2, &mask);
+        CPU_SET(3, &mask);
+        CPU_SET(4, &mask);
+        CPU_SET(5, &mask);
+        CPU_SET(6, &mask);
+        CPU_SET(7, &mask);
+        CPU_SET(8, &mask);
+        CPU_SET(9, &mask);
+        CPU_SET(10, &mask);
+        CPU_SET(11, &mask);
+        CPU_SET(12, &mask);
+        CPU_SET(13, &mask);
+        num_thread=14;
+    }
+    else if (cpu_control_type==161)
+    {
+        CPU_SET(0, &mask);
+        CPU_SET(2, &mask);
+        CPU_SET(4, &mask);
+        CPU_SET(6, &mask);
+        CPU_SET(8, &mask);
+        CPU_SET(10, &mask);
+        CPU_SET(12, &mask);
+        CPU_SET(14, &mask);
+        CPU_SET(16, &mask);
+        CPU_SET(18, &mask);
+        CPU_SET(20, &mask);
+        CPU_SET(22, &mask);
+        CPU_SET(24, &mask);
+        CPU_SET(26, &mask);
+        CPU_SET(28, &mask);
+        CPU_SET(30, &mask);
+        num_thread=16;
+    }
+    else if (cpu_control_type==162)
+    {
+        CPU_SET(0, &mask);
+        CPU_SET(1, &mask);
+        CPU_SET(2, &mask);
+        CPU_SET(3, &mask);
+        CPU_SET(4, &mask);
+        CPU_SET(5, &mask);
+        CPU_SET(6, &mask);
+        CPU_SET(7, &mask);
+        CPU_SET(8, &mask);
+        CPU_SET(9, &mask);
+        CPU_SET(10, &mask);
+        CPU_SET(11, &mask);
+        CPU_SET(12, &mask);
+        CPU_SET(13, &mask);
+        CPU_SET(14, &mask);
+        CPU_SET(15, &mask);
+        num_thread=16;
+    }
     else if (cpu_control_type==182)
     {
             CPU_SET(0, &mask);
@@ -419,7 +495,6 @@ int main (int argc, char **argv)
             CPU_SET(23, &mask);
             num_thread=24;
     }
-    //new control type for gruenau1-server with 36 cores on 2 CPUs
     else if (cpu_control_type==362)
     {
             CPU_SET(0, &mask);
@@ -508,7 +583,8 @@ int main (int argc, char **argv)
     // Load data
     dataset_size = dataset_size - 100;
     load_data(dataset, dataset_size, data_dimensionality);
-
+    
+    int memory_before_indexing = getCurrentRSS() / 1000000;
     std::cout << "Actual memory usage before indexing: " << getCurrentRSS() / 1000000 << " MB" << std::endl;
 
     // Generate LSH representations
@@ -588,6 +664,7 @@ int main (int argc, char **argv)
         free(idx_lsh[num_l]->lsh_mem_array); 
     }
 
+    int memory_after_indexing = getCurrentRSS() / 1000000;
     std::cout << "Actual memory usage after indexing: " << getCurrentRSS() / 1000000 << " MB" << std::endl;
 
     // Load and generate LSH representations for queries
@@ -614,8 +691,6 @@ int main (int argc, char **argv)
     queryfile = (data_type*)malloc(sizeof(data_type) * data_dimensionality * queries_size);
     int query_read_number = fread(queryfile, sizeof(data_type), data_dimensionality * queries_size, ifile_query);
     fclose(ifile_query);
-
-    candidate_node ** nodes = (candidate_node **)malloc(sizeof(candidate_node*) * queries_size);
 
     for (int i = 0; i < l_size; i++)
     {
@@ -646,121 +721,368 @@ int main (int argc, char **argv)
             }  
         }                             
     } 
+
+    struct timeval start_phase_q, end_phase_q;
+    long query_phase1, query_phase2, query_phase3, query_phase4;
     
     std::cout << "-----------------Start query-----------------" << std::endl;
     // The first step of query: generate the priority queue of candidate leaf nodes for each query
     gettimeofday(&start, NULL);
+    gettimeofday(&start_phase_q, NULL);
     for (int num_l = 0; num_l < l_size; num_l++)
     {     
         range_query(queries, queries_size, idx_lsh[num_l], search_radius, &range_search_lsh);
     }
+    gettimeofday(&end_phase_q, NULL);
     gettimeofday(&end, NULL);
     query_all += (1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+    query_phase1 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
 
     // Perform subsequent steps for each query
+    candidate_node ** nodes = (candidate_node **)malloc(sizeof(candidate_node*) * queries_size);
+
+    progress_display pd_query(queries_size);
     for (int q_loaded = 0; q_loaded < queries_size; ++q_loaded)
     {
         // The second step of query: generate the candidate set of points by obtained priority queues
         gettimeofday(&start, NULL);
- 
-        int data_loaded = 0; 
 
-        std::unordered_map<long int, bool> isCandidate;
+        gettimeofday(&start_phase_q, NULL);
+
+        int data_loaded = 0;
 
         nodes[q_loaded] = (candidate_node *)malloc(sizeof(candidate_node) * max_candidate_size);
 
-        index_query_result * index_query_results = (index_query_result *)malloc(sizeof(index_query_result) * l_size);
-        for (int i = 0; i < l_size; i++) { 
-            index_query_results[i].result = (query_result **)malloc(sizeof(query_result *) * N_PQUEUE);
-        }
+        if (num_thread == 1) {
+            std::unordered_map<long int, bool> isCandidate;
 
-        int ** queue_is_empty = (int **) malloc(l_size * sizeof(int*));
-        for (int i = 0; i < l_size; i++) {
-            queue_is_empty[i] = (int *) malloc(sizeof(int) * N_PQUEUE);
-            for (int j = 0; j < N_PQUEUE; j++) {
-                queue_is_empty[i][j] = 0;
+            index_query_result * index_query_results = (index_query_result *)malloc(sizeof(index_query_result) * l_size);
+            for (int i = 0; i < l_size; i++) { 
+                index_query_results[i].result = (query_result **)malloc(sizeof(query_result *) * N_PQUEUE);
             }
-        }
 
-        float * mindist_in_every_index = (float *)malloc(sizeof(float) * l_size);
-        int * num_queue = (int *)malloc(sizeof(int) * l_size);
-        for (int i = 0; i < l_size; i++) {
-            mindist_in_every_index[i] = FLT_MAX;
-            num_queue[i] = 0;
-        }
-
-        for (int i = 0; i < l_size; i++)
-        {
-            for (int j = 0; j < N_PQUEUE; j++) {
-                index_query_results[i].result[j] = (query_result *)pqueue_pop(idx_lsh[i]->range_queue_result[q_loaded].pq[j]);     
-
-                if(!index_query_results[i].result[j]) { 
-                    queue_is_empty[i][j] = 1;        
-                    continue;
-                }
-                
-                if (index_query_results[i].result[j]->lower_distance < mindist_in_every_index[i]) {
-                    mindist_in_every_index[i] = index_query_results[i].result[j]->lower_distance;
-                    num_queue[i] = j;
+            int ** queue_is_empty = (int **) malloc(l_size * sizeof(int*));
+            for (int i = 0; i < l_size; i++) {
+                queue_is_empty[i] = (int *) malloc(sizeof(int) * N_PQUEUE);
+                for (int j = 0; j < N_PQUEUE; j++) {
+                    queue_is_empty[i][j] = 0;
                 }
             }
-        }
 
-        while(1) 
-        {
-            int mindist_index = 0;
-            float mindist = FLT_MAX;
+            float * mindist_in_every_index = (float *)malloc(sizeof(float) * l_size);
+            int * num_queue = (int *)malloc(sizeof(int) * l_size);
+            for (int i = 0; i < l_size; i++) {
+                mindist_in_every_index[i] = FLT_MAX;
+                num_queue[i] = 0;
+            }
 
             for (int i = 0; i < l_size; i++)
             {
-                int accumulated = 0;
                 for (int j = 0; j < N_PQUEUE; j++) {
-                    accumulated += queue_is_empty[i][j];
-                }
-                if (accumulated < N_PQUEUE && mindist_in_every_index[i] < mindist) {
-                    mindist = mindist_in_every_index[i];
-                    mindist_index = i;
+                    index_query_results[i].result[j] = (query_result *)pqueue_pop(idx_lsh[i]->range_queue_result[q_loaded].pq[j]);     
+
+                    if(!index_query_results[i].result[j]) { 
+                        queue_is_empty[i][j] = 1;        
+                        continue;
+                    }
+                    
+                    if (index_query_results[i].result[j]->lower_distance < mindist_in_every_index[i]) {
+                        mindist_in_every_index[i] = index_query_results[i].result[j]->lower_distance;
+                        num_queue[i] = j;
+                    }
                 }
             }
 
-            if (mindist == FLT_MAX) {
-                break;
-            }
-
-            for (int i = 0; i < index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_buffer_size; i++)
+            while(1) 
             {
-                if (isCandidate.find(*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i])==isCandidate.end()) {
-                    nodes[q_loaded][data_loaded].currentposition = *index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i] / data_dimensionality;                      
-                    isCandidate[*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i]] = true;
-                    data_loaded++;
+                int mindist_index = 0;
+                float mindist = FLT_MAX;
 
-                    if (data_loaded == max_candidate_size) {
+                for (int i = 0; i < l_size; i++)
+                {
+                    int accumulated = 0;
+                    for (int j = 0; j < N_PQUEUE; j++) {
+                        accumulated += queue_is_empty[i][j];
+                    }
+                    if (accumulated < N_PQUEUE && mindist_in_every_index[i] < mindist) {
+                        mindist = mindist_in_every_index[i];
+                        mindist_index = i;
+                    }
+                }
+
+                if (mindist == FLT_MAX) {
+                    break;
+                }
+
+                for (int i = 0; i < index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_buffer_size; i++)
+                {
+                    if (isCandidate.find(*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i])==isCandidate.end()) {
+                        nodes[q_loaded][data_loaded].currentposition = *index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i] / data_dimensionality;                      
+                        isCandidate[*index_query_results[mindist_index].result[num_queue[mindist_index]]->node->buffer->partial_position_buffer[i]] = true;
+                        data_loaded++;
+
+                        if (data_loaded == max_candidate_size) {
+                            break;
+                        }
+                    }                            
+                }
+
+                if (data_loaded == max_candidate_size) {
+                    break;
+                }
+                
+                index_query_results[mindist_index].result[num_queue[mindist_index]] = (query_result *)pqueue_pop(idx_lsh[mindist_index]->range_queue_result[q_loaded].pq[num_queue[mindist_index]]);
+                if(!index_query_results[mindist_index].result[num_queue[mindist_index]]) {
+                    queue_is_empty[mindist_index][num_queue[mindist_index]] = 1;
+                }
+
+                int temp_index = 0;
+                float temp_mindist = FLT_MAX;
+                for (int j = 0; j < N_PQUEUE; j++) {
+                    if (!queue_is_empty[mindist_index][j] && index_query_results[mindist_index].result[j]->lower_distance < temp_mindist) {
+                        temp_index = j;
+                        temp_mindist = index_query_results[mindist_index].result[j]->lower_distance;
+                    }
+                }
+                mindist_in_every_index[mindist_index] = temp_mindist;
+                num_queue[mindist_index] = temp_index;
+            }
+        }
+        // else {
+        //     gettimeofday(&start_qq, NULL);
+
+        //     std::vector<query_result*> leaf_nodes;
+
+        //     for (int i = 0; i < l_size; i++) {
+        //         for (int j = 0; j < N_PQUEUE; j++) {
+        //             while (pqueue_size(idx_lsh[i]->range_queue_result[q_loaded].pq[j]) > 0) {
+        //                 leaf_nodes.push_back((query_result *) pqueue_pop(idx_lsh[i]->range_queue_result[q_loaded].pq[j]));
+        //             }
+        //         }
+        //     }
+
+        //     sort(leaf_nodes.begin(), leaf_nodes.end(), CompLess);
+
+        //     gettimeofday(&end_qq, NULL);
+        //     query_qq += (1000000 * (end_qq.tv_sec - start_qq.tv_sec) + end_qq.tv_usec - start_qq.tv_usec);
+
+        //     std::vector<bool> isCandidate(dataset_size);
+
+        //     int max_candidate_each_thread = max_candidate_size / num_thread;
+        //     int * num_candidate_each_thread = new int [num_thread]();
+        //     int finished_thread = 0;
+        //     int continued_thread = 0;
+        //     int last_node_index = 0;
+        //     int left_candidate_num = 0;
+        //     bool * stop_to_traverse = new bool[num_thread]();
+        //     bool continue_flag = false;
+        //     float min_ratio = 0.8;
+        //     int min_obtain_from_para = min_ratio * max_candidate_size;
+
+        //     omp_lock_t lock1, lock2;
+        //     omp_init_lock(&lock1);
+        //     omp_init_lock(&lock2);
+
+        //     #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
+        //     for (int i = 0; i < leaf_nodes.size(); i++) {
+
+        //         int tid = omp_get_thread_num();
+
+        //         if (stop_to_traverse[tid]) {
+        //             continue;
+        //         }
+
+        //         for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
+        //             isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
+        //         }
+
+        //         num_candidate_each_thread[tid] += leaf_nodes[i]->node->buffer->partial_buffer_size;
+
+        //         if (num_candidate_each_thread[tid] > max_candidate_each_thread) {
+        //             omp_set_lock(&lock1);
+        //             finished_thread++;
+        //             if (i > last_node_index) {
+        //                 last_node_index = i;
+        //             }
+        //             omp_unset_lock(&lock1);
+                    
+        //             while(1) {
+        //                 if (finished_thread == num_thread) {
+        //                     break;
+        //                 }
+        //             }
+
+        //             if (tid == 0) {
+        //                 omp_set_lock(&lock2);
+        //                 num_candidate_each_thread[tid] = 0;
+        //                 if (std::count(isCandidate.begin(), isCandidate.end(), true) > min_obtain_from_para) {
+        //                     stop_to_traverse[tid] = true;
+        //                 }
+        //                 left_candidate_num = max_candidate_size - std::count(isCandidate.begin(), isCandidate.end(), true);
+        //                 max_candidate_each_thread = left_candidate_num / num_thread;
+        //                 finished_thread = 0;
+        //                 continue_flag = true;
+        //                 omp_unset_lock(&lock2);
+        //                 while(1) {
+        //                     if (continued_thread == num_thread - 1) {
+        //                         continue_flag = false;
+        //                         continued_thread = 0;
+        //                         break;
+        //                     }
+        //                 }
+        //             } else {
+        //                 while(1) {
+        //                     if (continue_flag == true) {
+        //                         omp_set_lock(&lock2);
+        //                         num_candidate_each_thread[tid] = 0;
+        //                         if (std::count(isCandidate.begin(), isCandidate.end(), true) > min_obtain_from_para) {
+        //                             stop_to_traverse[tid] = true;
+        //                         }
+        //                         continued_thread++;
+        //                         omp_unset_lock(&lock2);
+        //                         break;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+
+        //     if (left_candidate_num > 0) {
+        //         for (int i = last_node_index + 1; i < leaf_nodes.size(); i++) {
+        //             for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
+        //                 if (isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] == false && left_candidate_num > 0) {
+        //                     isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
+        //                     left_candidate_num--;
+        //                 }
+        //             }
+        //             if (left_candidate_num == 0) {
+        //                 break;
+        //             }
+        //         }
+        //     }
+
+        //     for (int i = 0; i < dataset_size; i++) {
+        //         if (isCandidate[i] == true) {
+        //             nodes[q_loaded][data_loaded].currentposition = i;
+        //             data_loaded++;
+        //         }
+        //     }
+        // }
+        else {
+            std::vector<query_result*> leaf_nodes;
+
+            for (int i = 0; i < l_size; i++) {
+                for (int j = 0; j < N_PQUEUE; j++) {
+                    while (pqueue_size(idx_lsh[i]->range_queue_result[q_loaded].pq[j]) > 0) {
+                        leaf_nodes.push_back((query_result *) pqueue_pop(idx_lsh[i]->range_queue_result[q_loaded].pq[j]));
+                    }
+                }
+            }
+
+            sort(leaf_nodes.begin(), leaf_nodes.end(), CompLess);
+
+            std::vector<bool> isCandidate(dataset_size);
+
+            int max_candidate_each_thread = max_candidate_size / num_thread;
+            int * num_candidate_each_thread = new int [num_thread]();
+            int finished_thread = 0;
+            int last_node_index = 0;
+            bool stop_to_traverse = false;
+
+            omp_lock_t lock;
+            omp_init_lock(&lock);
+
+            #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
+            for (int i = 0; i < leaf_nodes.size(); i++) {
+                if (stop_to_traverse) {
+                    continue;
+                }
+
+                int tid = omp_get_thread_num();
+
+                for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
+                    isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
+                }
+
+                num_candidate_each_thread[tid] += leaf_nodes[i]->node->buffer->partial_buffer_size;
+
+                if (num_candidate_each_thread[tid] > max_candidate_each_thread) {
+                    omp_set_lock(&lock);
+                    finished_thread++;
+                    if (i > last_node_index) {
+                        last_node_index = i;
+                    }
+                    omp_unset_lock(&lock);
+                    
+                    while(1) {
+                        if (finished_thread == num_thread) {
+                            stop_to_traverse = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // #pragma omp parallel for schedule(dynamic) num_threads(num_thread)
+            // for (int i = 0; i < leaf_nodes.size(); i++) {
+            //     if (stop_to_traverse) {
+            //         continue;
+            //     }
+
+            //     //int tid = omp_get_thread_num();
+
+            //     for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
+            //         isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
+            //     }
+                
+            //     //num_candidate_each_thread[0] += leaf_nodes[i]->node->buffer->partial_buffer_size;
+            //     __sync_fetch_and_add(&num_candidate_each_thread[0],leaf_nodes[i]->node->buffer->partial_buffer_size);
+
+            //     if (num_candidate_each_thread[0] > max_candidate_size) {
+            //         omp_set_lock(&lock);
+            //         //finished_thread++;
+            //         if (i > last_node_index) {
+            //             last_node_index = i;
+            //         }
+            //         stop_to_traverse = true;
+            //         omp_unset_lock(&lock);
+                    
+            //         // while(1) {
+            //         //     if (finished_thread == num_thread) {
+            //         //         stop_to_traverse = true;
+            //         //         break;
+            //         //     }
+            //         // }
+            //     }
+            // }
+
+            int left_candidate_num = max_candidate_size - std::count(isCandidate.begin(), isCandidate.end(), true);
+
+            if (left_candidate_num > 0) {
+                for (int i = last_node_index + 1; i < leaf_nodes.size(); i++) {
+                    for (int j = 0; j < leaf_nodes[i]->node->buffer->partial_buffer_size; j++) {
+                        if (isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] == false && left_candidate_num > 0) {
+                            isCandidate[*leaf_nodes[i]->node->buffer->partial_position_buffer[j] / data_dimensionality] = true;
+                            left_candidate_num--;
+                        }
+                    }
+                    if (left_candidate_num == 0) {
                         break;
                     }
-                }                            
-            }
-
-            if (data_loaded == max_candidate_size) {
-                break;
-            }
-            
-            index_query_results[mindist_index].result[num_queue[mindist_index]] = (query_result *)pqueue_pop(idx_lsh[mindist_index]->range_queue_result[q_loaded].pq[num_queue[mindist_index]]);
-            if(!index_query_results[mindist_index].result[num_queue[mindist_index]]) {
-                queue_is_empty[mindist_index][num_queue[mindist_index]] = 1;
-            }
-
-            int temp_index = 0;
-            float temp_mindist = FLT_MAX;
-            for (int j = 0; j < N_PQUEUE; j++) {
-                if (!queue_is_empty[mindist_index][j] && index_query_results[mindist_index].result[j]->lower_distance < temp_mindist) {
-                    temp_index = j;
-                    temp_mindist = index_query_results[mindist_index].result[j]->lower_distance;
                 }
             }
-            mindist_in_every_index[mindist_index] = temp_mindist;
-            num_queue[mindist_index] = temp_index;
-        }
 
+            for (int i = 0; i < dataset_size; i++) {
+                if (isCandidate[i] == true) {
+                    nodes[q_loaded][data_loaded].currentposition = i;
+                    data_loaded++;
+                }
+            }
+        }
+        gettimeofday(&end_phase_q, NULL);
+        query_phase2 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
+
+        gettimeofday(&start_phase_q, NULL);
         if (num_thread == 1) {
             for (int i = 0; i < data_loaded; i++) {
                 nodes[q_loaded][i].dist = euclidean_distance(idx_lsh[0]->query_points[q_loaded], &(rawfile[nodes[q_loaded][i].currentposition * data_dimensionality]), data_dimensionality);
@@ -771,22 +1093,33 @@ int main (int argc, char **argv)
                 nodes[q_loaded][i].dist = faiss::fvec_L2sqr_avx512(idx_lsh[0]->query_points[q_loaded], &(rawfile[nodes[q_loaded][i].currentposition * data_dimensionality]), data_dimensionality);
             }
         }
+        gettimeofday(&end_phase_q, NULL);
+        query_phase3 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
 
+        gettimeofday(&start_phase_q, NULL);
         // The third step of query: obtain the k-NN from the points in the candidate set
         if (k_size < data_loaded) {
             std::partial_sort(nodes[q_loaded], nodes[q_loaded] + k_size, nodes[q_loaded] + data_loaded);
         } else {
             std::sort(nodes[q_loaded], nodes[q_loaded] + data_loaded);
         }
+        gettimeofday(&end_phase_q, NULL);
 
+        query_phase4 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
         gettimeofday(&end, NULL);
         query_all += (1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
 
-        std::cout << "Finish the " << q_loaded + 1 << "-th query." << std::endl;
+        // std::cout << "Finish the " << q_loaded + 1 << "-th query." << std::endl;
+        ++pd_query;
     }
 
+    std::cout << "The indexing footprint is: " << memory_after_indexing - memory_before_indexing << "MB" << std::endl;
     std::cout << "The total time of encoding and indexing phase is: " << index_all / 1000.0 << "ms." << std::endl;
     std::cout << "The average query time is " << query_all / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query phase1 is " << query_phase1 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query phase2 is " << query_phase2 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query phase3 is " << query_phase3 / queries_size / 1000.0 << "ms." << std::endl;
+    std::cout << "The average time of query phase4 is " << query_phase4 / queries_size / 1000.0 << "ms." << std::endl;
 
     std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
     FILE *ifile_groundtruth;
@@ -795,11 +1128,11 @@ int main (int argc, char **argv)
         fprintf(stderr, "File %s not found!\n", groundtruth);
         exit(-1);
     }
-    int ** groundtruth_result = (int **) malloc(sizeof(int*) * queries_size);
+    long int ** groundtruth_result = (long int **) malloc(sizeof(long int*) * queries_size);
     for (int i = 0; i < queries_size; i++)
     {
-        groundtruth_result[i] = (int *) malloc(sizeof(int) * k_size);
-        fread(groundtruth_result[i], sizeof(int), k_size, ifile_groundtruth);           
+        groundtruth_result[i] = (long int *) malloc(sizeof(long int) * k_size);
+        fread(groundtruth_result[i], sizeof(long int), k_size, ifile_groundtruth);           
     }
     fclose(ifile_groundtruth);
 
@@ -822,6 +1155,15 @@ int main (int argc, char **argv)
         }
     }
 
+    // for (int i = 0; i < queries_size; i++)
+    // {
+    //     std::cout << "query = " << i << std::endl;
+    //     for (int j = 0; j < k_size; j++)
+    //     {
+    //         std::cout << "nodes[i][j].currentposition = " << nodes[i][j].currentposition << ", groundtruth_result[i][j] = " << groundtruth_result[i][j] << std::endl;
+    //     }
+    // }
+
     float ratio = 0.0f;
     for (int i = 0; i < queries_size; i++)
     {
@@ -829,7 +1171,7 @@ int main (int argc, char **argv)
         {
             float groundtruth_square_dist = euclidean_distance(idx_lsh[0]->query_points[i], &(rawfile[groundtruth_result[i][j] * data_dimensionality]), data_dimensionality);
             float obtained_square_dist = euclidean_distance(idx_lsh[0]->query_points[i], &(rawfile[nodes[i][j].currentposition * data_dimensionality]), data_dimensionality);
-            if (groundtruth_square_dist == 0) {
+            if (groundtruth_square_dist == 0.0) {
                 ratio += 1.0f;
             } else {
                 ratio += sqrt(obtained_square_dist) / sqrt(groundtruth_square_dist);
