@@ -722,8 +722,8 @@ int main (int argc, char **argv)
         }                             
     } 
 
-    struct timeval start_phase_q, end_phase_q, start_1, end_1, start_2, end_2, start_3, end_3, start_4, end_4, start_5, end_5, start_6, end_6;
-    long query_phase1, query_phase2, query_phase3, query_phase4, query_1, query_2, query_3, query_4, query_5, query_6;
+    struct timeval start_phase_q, end_phase_q;
+    long query_phase1, query_phase2, query_phase3;
     
     std::cout << "-----------------Start query-----------------" << std::endl;
     // The first step of query: generate the priority queue of candidate leaf nodes for each query
@@ -848,9 +848,7 @@ int main (int argc, char **argv)
                 num_queue[mindist_index] = temp_index;
             }
         } else {
-            gettimeofday(&start_1, NULL);
             std::vector<query_result*> leaf_nodes;
-
             for (int i = 0; i < l_size; i++) {
                 for (int j = 0; j < N_PQUEUE; j++) {
                     while (pqueue_size(idx_lsh[i]->range_queue_result[q_loaded].pq[j]) > 0) {
@@ -858,22 +856,14 @@ int main (int argc, char **argv)
                     }
                 }
             }
-            gettimeofday(&end_1, NULL);
-            query_1 += (1000000 * (end_1.tv_sec - start_1.tv_sec) + end_1.tv_usec - start_1.tv_usec);
-
-            gettimeofday(&start_2, NULL);
             sort(leaf_nodes.begin(), leaf_nodes.end(), CompLess);
-            gettimeofday(&end_2, NULL);
-            query_2 += (1000000 * (end_2.tv_sec - start_2.tv_sec) + end_2.tv_usec - start_2.tv_usec);
 
-            gettimeofday(&start_3, NULL);
             std::vector<bool> isCandidate(dataset_size);
-
             int max_candidate_each_thread = max_candidate_size / num_thread;
-            int * num_candidate_each_thread = new int [num_thread]();
+            int * num_candidate_each_thread = new int[num_thread]();
             int finished_thread = 0;
             int last_node_index = 0;
-            int * last_node_index_each_thread = new int [num_thread]();
+            int * last_node_index_each_thread = new int[num_thread]();
             bool stop_to_traverse = false;
 
             omp_lock_t lock;
@@ -909,10 +899,7 @@ int main (int argc, char **argv)
                 }
             }
             last_node_index = *std::max_element(last_node_index_each_thread, last_node_index_each_thread + num_thread);
-            gettimeofday(&end_3, NULL);
-            query_3 += (1000000 * (end_3.tv_sec - start_3.tv_sec) + end_3.tv_usec - start_3.tv_usec);
 
-            gettimeofday(&start_4, NULL);
             int obtained_candidate_num = 0;
             #pragma omp parallel for reduction(+:obtained_candidate_num) num_threads(num_thread)
             for (int i = 0; i < dataset_size; i++) {
@@ -921,10 +908,7 @@ int main (int argc, char **argv)
                 }
             }
             int left_candidate_num = max_candidate_size - obtained_candidate_num;
-            gettimeofday(&end_4, NULL);
-            query_4 += (1000000 * (end_4.tv_sec - start_4.tv_sec) + end_4.tv_usec - start_4.tv_usec);
 
-            gettimeofday(&start_5, NULL);
             if (left_candidate_num > 0 && last_node_index != leaf_nodes.size() - 1) 
             {
                 for (int i = last_node_index + 1; i < leaf_nodes.size(); i++) {
@@ -939,10 +923,7 @@ int main (int argc, char **argv)
                     }
                 }
             }
-            gettimeofday(&end_5, NULL);
-            query_5 += (1000000 * (end_5.tv_sec - start_5.tv_sec) + end_5.tv_usec - start_5.tv_usec);
 
-            gettimeofday(&start_6, NULL);
             std::vector<std::vector<candidate_node>> candidate_each_thread(num_thread);
             #pragma omp parallel for num_threads(num_thread)
             for (int i = 0; i < dataset_size; i++) {
@@ -955,9 +936,6 @@ int main (int argc, char **argv)
                 std::copy(candidate_each_thread[i].begin(), candidate_each_thread[i].begin() + candidate_each_thread[i].size(), nodes[q_loaded] + data_loaded);
                 data_loaded += candidate_each_thread[i].size();
             }
-
-            gettimeofday(&end_6, NULL);
-            query_6 += (1000000 * (end_6.tv_sec - start_6.tv_sec) + end_6.tv_usec - start_6.tv_usec);
         }
         gettimeofday(&end_phase_q, NULL);
         query_phase2 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
@@ -974,10 +952,6 @@ int main (int argc, char **argv)
                 nodes[q_loaded][i].dist = faiss::fvec_L2sqr_avx512(idx_lsh[0]->query_points[q_loaded], &(rawfile[nodes[q_loaded][i].currentposition * data_dimensionality]), data_dimensionality);
             }
         }
-        gettimeofday(&end_phase_q, NULL);
-        query_phase3 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
-
-        gettimeofday(&start_phase_q, NULL);
         
         if (k_size < data_loaded) {
             std::partial_sort(nodes[q_loaded], nodes[q_loaded] + k_size, nodes[q_loaded] + data_loaded);
@@ -985,8 +959,8 @@ int main (int argc, char **argv)
             std::sort(nodes[q_loaded], nodes[q_loaded] + data_loaded);
         }
         gettimeofday(&end_phase_q, NULL);
+        query_phase3 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
 
-        query_phase4 += (1000000 * (end_phase_q.tv_sec - start_phase_q.tv_sec) + end_phase_q.tv_usec - start_phase_q.tv_usec);
         gettimeofday(&end, NULL);
         query_all += (1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
 
@@ -1000,13 +974,6 @@ int main (int argc, char **argv)
     std::cout << "The average time of query phase1 is " << query_phase1 / queries_size / 1000.0 << "ms." << std::endl;
     std::cout << "The average time of query phase2 is " << query_phase2 / queries_size / 1000.0 << "ms." << std::endl;
     std::cout << "The average time of query phase3 is " << query_phase3 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query phase4 is " << query_phase4 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_1 is " << query_1 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_2 is " << query_2 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_3 is " << query_3 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_4 is " << query_4 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_5 is " << query_5 / queries_size / 1000.0 << "ms." << std::endl;
-    std::cout << "The average time of query2_6 is " << query_6 / queries_size / 1000.0 << "ms." << std::endl;
 
     std::cout << "-----------------Loading groundtruth-----------------" << std::endl;
     FILE *ifile_groundtruth;
@@ -1041,15 +1008,6 @@ int main (int argc, char **argv)
             }
         }
     }
-
-    // for (int i = 0; i < queries_size; i++)
-    // {
-    //     std::cout << "query = " << i << std::endl;
-    //     for (int j = 0; j < k_size; j++)
-    //     {
-    //         std::cout << "nodes[i][j].currentposition = " << nodes[i][j].currentposition << ", groundtruth_result[i][j] = " << groundtruth_result[i][j] << std::endl;
-    //     }
-    // }
 
     float ratio = 0.0f;
     for (int i = 0; i < queries_size; i++)
