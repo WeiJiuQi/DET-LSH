@@ -606,30 +606,26 @@ int main (int argc, char **argv)
         // Generate LSH representations for all points
         idx_lsh[num_l]->lsh_mem_array = (data_type **) calloc(dataset_size, sizeof(data_type*));
         idx_lsh[num_l]->lsh_mem_array_for_init = (data_type **) calloc(LSH_dimensionality, sizeof(data_type*));
-        data_type * data_point = (data_type *) malloc(sizeof(data_type) * data_dimensionality);
 
         for (int i = 0; i < LSH_dimensionality; i++)
         {
             idx_lsh[num_l]->lsh_mem_array_for_init[i] = (data_type *) calloc(dataset_size, sizeof(data_type));
         }
 
-        for (int i = 0; i < dataset_size; i++)
+        for (long i = 0; i < dataset_size; i++)
         {
-            memcpy(data_point,&(rawfile[i*data_dimensionality]), sizeof(data_type)* data_dimensionality);
             idx_lsh[num_l]->lsh_mem_array[i] = (data_type *) calloc(LSH_dimensionality, sizeof(data_type));                  
             for(int j = 0; j < LSH_dimensionality; j++)
             {
                 data_type value = 0.0;
                 for(int k = 0; k < data_dimensionality; k++)
                 {
-                    value += idx_lsh[num_l]->lsh_hash_set[j][k] * data_point[k];
+                    value += idx_lsh[num_l]->lsh_hash_set[j][k] * rawfile[i * data_dimensionality + k];
                 }
                 idx_lsh[num_l]->lsh_mem_array[i][j] = value;
                 idx_lsh[num_l]->lsh_mem_array_for_init[j][i] = value;
             }
         }
-
-        free(data_point);
     }
 
     // Encoding and indexing
