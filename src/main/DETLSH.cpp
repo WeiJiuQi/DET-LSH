@@ -614,7 +614,11 @@ int main (int argc, char **argv)
 
         for (long i = 0; i < dataset_size; i++)
         {
-            idx_lsh[num_l]->lsh_mem_array[i] = (data_type *) calloc(LSH_dimensionality, sizeof(data_type));                  
+            idx_lsh[num_l]->lsh_mem_array[i] = (data_type *) calloc(LSH_dimensionality, sizeof(data_type));
+        }
+
+        for (long i = 0; i < dataset_size; i++)
+        {
             for(int j = 0; j < LSH_dimensionality; j++)
             {
                 data_type value = 0.0;
