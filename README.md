@@ -1,6 +1,6 @@
 # DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search
 
-This is the source code of the method proposed in paper: **DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search (accepted by PVLDB 2024)**.
+This is the source code of the method proposed in paper: **[DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf) (accepted by PVLDB 2024)**.
 
 ## Dependency
 
@@ -154,4 +154,22 @@ The format of benchmark file is:
 |      Yandex Deep500M      |       1       |   50000   | 50,000,000  | 50,000,000 + k-size |
 |   Microsoft SPACEV500M    |     18000     |  100000   | 50,000,000  | 50,000,000 + k-size |
 | Microsoft Turing-ANNS500M |       2       |   10000   | 50,000,000  | 50,000,000 + k-size |
+
+## Citation
+
+You can obtain our paper from the [link](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf).
+
+If you want to cite our work, please use this text of bibtex format.
+
+```
+@article{detlsh,
+	title={DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search},
+	author={Wei, Jiuqi and Peng, Botao and Lee, Xiaodong and Palpanas, Themis},
+	journal={Proceedings of the VLDB Endowment},
+	volume={17},
+	number={9},
+    pages={2241--2254},
+	year={2024}
+}
+```
 
