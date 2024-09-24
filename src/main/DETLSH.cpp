@@ -127,7 +127,8 @@ int main (int argc, char **argv)
 
             case 'B':
             	LSH_dimensionality = atoi(optarg);
-
+		break;
+		
             case 'l':
                 leaf_size = atoi(optarg);
                 break;
