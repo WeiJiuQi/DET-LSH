@@ -103,9 +103,9 @@ We use eight real-world datasets for ANN search: [Msong](https://www.cse.cuhk.ed
 | :-----------------------: | :---------: | :--------: | :---: |
 |           Msong           |   994,185   |    420     | Audio |
 |          Deep1M           |  1,000,000  |    256     | Image |
-|          Sift10M          | 10,000,000  |    128     | Image |
+|          Sift10M (normalized)         | 10,000,000  |    128     | Image |
 |       TinyImages80M       | 79,302,017  |    384     | Image |
-|         Sift100M          | 100,000,000 |    128     | Image |
+|         Sift100M (normalized)          | 100,000,000 |    128     | Image |
 |      Yandex Deep500M      | 500,000,000 |     96     | Image |
 |   Microsoft SPACEV500M    | 500,000,000 |    100     | Text  |
 | Microsoft Turing-ANNS500M | 500,000,000 |    100     | Text  |
