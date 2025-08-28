@@ -32,7 +32,7 @@ lib_libutils_a_CFLAGS =-I/opt/local/include -Iinclude/ -march=native -mavx -mavx
 # bin_PROGRAMS = bin/DETLSH
 # bin_DETLSH_SOURCES = src/main/DETLSH.cpp
 # bin_DETLSH_CXXFLAGS = -I/opt/local/include -Iinclude/ -I/usr/local/include/ -march=native -fopenmp
-# in_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
+# bin_DETLSH_LDADD = -lm -lreadline -lutils -lpthread
 # bin_DETLSH_LDFLAGS = -L/opt/local/lib -Llib/  -mavx -mavx2 -msse3
 ```
 
@@ -172,4 +172,5 @@ If you want to cite our work, please use this text of bibtex format.
 	year={2024}
 }
 ```
+
 
