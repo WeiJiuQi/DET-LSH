@@ -891,11 +891,9 @@ int main (int argc, char **argv)
                     finished_thread++;
                     omp_unset_lock(&lock);
                     
-                    while(1) {
-                        if (finished_thread == num_thread) {
-                            stop_to_traverse = true;
-                            break;
-                        }
+                    while(finished_thread == num_thread) {
+                        stop_to_traverse = true;
+                        break;
                     }
                 }
             }
