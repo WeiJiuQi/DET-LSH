@@ -1,6 +1,6 @@
-# DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search
+# DET-LSH/PDET-LSH
 
-This is the source code of the method proposed in paper: **[DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf) (accepted by PVLDB 2024)**.
+This is the source code of the method proposed in paper: **[DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf) (accepted by PVLDB 2024)** and **[PDET-LSH: Scalable In-Memory Indexing for High-Dimensional Approximate Nearest Neighbor Search With Quality Guarantees]([https://www.vldb.org/pvldb/vol17/p2241-wei.pdf](https://www.computer.org/csdl/journal/tk/2026/06/11455979/2f9bYTlU4bm)) (accepted by TKDE 2026)**.
 
 ## Dependency
 
@@ -157,7 +157,7 @@ The format of benchmark file is:
 
 ## Citation
 
-You can obtain our paper from the [link](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf).
+You can obtain our paper: [DET-LSH](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf), [PDET-LSH](https://www.computer.org/csdl/journal/tk/2026/06/11455979/2f9bYTlU4bm).
 
 If you want to cite our work, please use this text of bibtex format.
 
@@ -170,6 +170,14 @@ If you want to cite our work, please use this text of bibtex format.
 	number={9},
     pages={2241--2254},
 	year={2024}
+}
+
+@article{wei2026pdet,
+  title={Pdet-lsh: Scalable in-memory indexing for high-dimensional approximate nearest neighbor search with quality guarantees},
+  author={Wei, Jiuqi and Lee, Xiaodong and Peng, Botao and Xu, Quanqing and Yang, Chuanhui and Palpanas, Themis},
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  year={2026},
+  publisher={IEEE}
 }
 ```
 
