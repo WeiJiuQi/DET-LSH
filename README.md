@@ -1,6 +1,6 @@
 # DET-LSH/PDET-LSH
 
-This is the source code of the method proposed in paper: **[DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf) (accepted by PVLDB 2024)** and **[PDET-LSH: Scalable In-Memory Indexing for High-Dimensional Approximate Nearest Neighbor Search With Quality Guarantees]([https://www.vldb.org/pvldb/vol17/p2241-wei.pdf](https://www.computer.org/csdl/journal/tk/2026/06/11455979/2f9bYTlU4bm) (accepted by TKDE 2026)**.
+This is the source code of the method proposed in paper: **[DET-LSH: A Locality-Sensitive Hashing Scheme with Dynamic Encoding Tree for Approximate Nearest Neighbor Search](https://www.vldb.org/pvldb/vol17/p2241-wei.pdf) (accepted by PVLDB 2024)** and **[PDET-LSH: Scalable In-Memory Indexing for High-Dimensional Approximate Nearest Neighbor Search With Quality Guarantees](https://www.computer.org/csdl/journal/tk/2026/06/11455979/2f9bYTlU4bm) (accepted by TKDE 2026)**.
 
 ## Dependency
 
